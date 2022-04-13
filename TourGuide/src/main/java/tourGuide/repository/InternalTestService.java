@@ -1,4 +1,4 @@
-package tourGuide.Repository;
+package tourGuide.repository;
 
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;

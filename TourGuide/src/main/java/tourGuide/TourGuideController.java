@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
+import tourGuide.DAO.UserDao;
+import tourGuide.customExceptions.UserNotFoundException;
+import tourGuide.service.GpsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
@@ -19,6 +22,12 @@ public class TourGuideController {
 
 	@Autowired
 	TourGuideService tourGuideService;
+
+    @Autowired
+    GpsService gpsService;
+
+    @Autowired
+    UserDao userDao;
 	
     @RequestMapping("/")
     public String index() {
@@ -26,8 +35,8 @@ public class TourGuideController {
     }
     
     @RequestMapping("/getLocation") 
-    public String getLocation(@RequestParam String userName) {
-    	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
+    public String getLocation(@RequestParam String userName) throws UserNotFoundException {
+    	VisitedLocation visitedLocation = gpsService.getUserLocation(getUser(userName));
 		return JsonStream.serialize(visitedLocation.location);
     }
     
@@ -41,13 +50,13 @@ public class TourGuideController {
         // The reward points for visiting each Attraction.
         //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions") 
-    public String getNearbyAttractions(@RequestParam String userName) {
-    	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
+    public String getNearbyAttractions(@RequestParam String userName) throws UserNotFoundException {
+    	VisitedLocation visitedLocation = gpsService.getUserLocation(getUser(userName));
     	return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation));
     }
     
     @RequestMapping("/getRewards") 
-    public String getRewards(@RequestParam String userName) {
+    public String getRewards(@RequestParam String userName) throws UserNotFoundException {
     	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
     }
     
@@ -67,13 +76,13 @@ public class TourGuideController {
     }
     
     @RequestMapping("/getTripDeals")
-    public String getTripDeals(@RequestParam String userName) {
+    public String getTripDeals(@RequestParam String userName) throws UserNotFoundException {
     	List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
     	return JsonStream.serialize(providers);
     }
     
-    private User getUser(String userName) {
-    	return tourGuideService.getUser(userName);
+    private User getUser(String userName) throws UserNotFoundException {
+    	return userDao.getUserFromUserName(userName);
     }
    
 
