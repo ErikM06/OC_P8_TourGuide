@@ -11,6 +11,7 @@ import tourGuide.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class GpsService {
@@ -18,12 +19,13 @@ public class GpsService {
     @Autowired
     private UserDao userDao;
 
-    @Autowired
-    private RewardsService rewardsService;
+
+    private final RewardsService rewardsService;
 
     private final GpsUtil gpsUtil;
 
-    public GpsService (GpsUtil gpsUtil){
+    public GpsService (RewardsService rewardsService, GpsUtil gpsUtil){
+        this.rewardsService = rewardsService;
         this.gpsUtil = gpsUtil;
     }
 
@@ -35,18 +37,20 @@ public class GpsService {
     }
 
     public VisitedLocation trackUserLocation(User user) throws UserNotFoundException {
-        VisitedLocation visitedLocation = userDao.getUserFromUserName(user.getUserName()).getLastVisitedLocation();
+      //  VisitedLocation visitedLocation = userDao.getUserFromUserName(user.getUserName()).getLastVisitedLocation();
+        VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocation);
         rewardsService.calculateRewards(user);
         return visitedLocation;
     }
     public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
         List<Attraction> nearbyAttractions = new ArrayList<>();
-        for (Attraction attraction : gpsUtil.getAttractions()) {
-            if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-                nearbyAttractions.add(attraction);
+        List<Attraction> allAttractions = new CopyOnWriteArrayList<>(gpsUtil.getAttractions());
+        allAttractions.forEach(a-> {
+            if (rewardsService.isWithinAttractionProximity(a, visitedLocation.location)) {
+                nearbyAttractions.add(a);
             }
-        }
+        });
 
         return nearbyAttractions;
     }

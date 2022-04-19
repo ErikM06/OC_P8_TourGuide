@@ -1,17 +1,21 @@
 package tourGuide;
 
-import static org.junit.Assert.*;
+
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
-import org.junit.Ignore;
-import org.junit.Test;
+
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rewardCentral.RewardCentral;
 import tourGuide.DAO.UserDao;
 import tourGuide.customExceptions.UserNotFoundException;
@@ -24,14 +28,22 @@ import tourGuide.service.TripDealsService;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 
-public class TestRewardsService {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+public class TestRewardsService {
+	Logger logger = LoggerFactory.getLogger(TestRewardsService.class);
+
+	@BeforeAll
+	private static void setUp (){
+		Locale.setDefault(Locale.US);
+	}
 	@Test
 	public void userGetRewards() throws UserNotFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService(rewardsService, gpsUtil);
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, userDao, gpsService, tripDealsService);
@@ -43,7 +55,9 @@ public class TestRewardsService {
 		tourGuideService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
 		tourGuideService.tracker.stopTracking();
-		assertTrue(userRewards.size() == 1);
+		logger.debug(" in @Test userGetReword(), reward point is :"+userRewards.get(0).getRewardPoints());
+
+		assertEquals(1, userRewards.size());
 	}
 	
 	@Test
@@ -54,17 +68,17 @@ public class TestRewardsService {
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
 	
-	@Ignore // Needs fixed - can throw ConcurrentModificationException
+	// Needs fixed - can throw ConcurrentModificationException
 	@Test
 	public void nearAllAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService(rewardsService, gpsUtil);
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, userDao, gpsService, tripDealsService);
-		InternalTestHelper.setInternalUserNumber(0);
+
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
 		InternalTestHelper.setInternalUserNumber(1);
