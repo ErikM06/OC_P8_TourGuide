@@ -57,7 +57,7 @@ public class TestPerformance {
 		Locale.setDefault(Locale.US);
 	}
 	@Test
-	public void highVolumeTrackLocation() throws UserNotFoundException {
+	public void highVolumeTrackLocation(){
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();

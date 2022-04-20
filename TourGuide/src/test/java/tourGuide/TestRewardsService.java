@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rewardCentral.RewardCentral;
 import tourGuide.DAO.UserDao;
-import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.GpsService;
@@ -39,7 +38,7 @@ public class TestRewardsService {
 		Locale.setDefault(Locale.US);
 	}
 	@Test
-	public void userGetRewards() throws UserNotFoundException {
+	public void userGetRewards(){
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();

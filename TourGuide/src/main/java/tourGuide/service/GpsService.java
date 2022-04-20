@@ -6,7 +6,6 @@ import gpsUtil.location.VisitedLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.DAO.UserDao;
-import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.user.User;
 
 import java.util.ArrayList;
@@ -29,14 +28,14 @@ public class GpsService {
         this.gpsUtil = gpsUtil;
     }
 
-    public VisitedLocation getUserLocation(User user) throws UserNotFoundException {
+    public VisitedLocation getUserLocation(User user){
         VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
                 user.getLastVisitedLocation() :
                 trackUserLocation(user);
         return visitedLocation;
     }
 
-    public VisitedLocation trackUserLocation(User user) throws UserNotFoundException {
+    public VisitedLocation trackUserLocation(User user){
       //  VisitedLocation visitedLocation = userDao.getUserFromUserName(user.getUserName()).getLastVisitedLocation();
         VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocation);
