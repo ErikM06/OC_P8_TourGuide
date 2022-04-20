@@ -49,7 +49,7 @@ public class TourGuideService {
 		return user.getUserRewards();
 	}
 
-	public VisitedLocation getUserLocationFromService(User user) throws UserNotFoundException {
+	public VisitedLocation getUserLocationFromService(User user){
 
 		return gpsService.getUserLocation(user);
 	}
@@ -71,7 +71,7 @@ public class TourGuideService {
 		return tripDealsService.getTripDeals(user);
 	}
 
-	public VisitedLocation trackUserLocation(User user) throws UserNotFoundException {
+	public VisitedLocation trackUserLocation(User user) {
 		return gpsService.trackUserLocation(user);
 	}
 

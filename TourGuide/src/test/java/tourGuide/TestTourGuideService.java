@@ -42,7 +42,7 @@ public class TestTourGuideService {
 		Locale.setDefault(Locale.US);
 	}
 	@Test
-	public void getUserLocation() throws UserNotFoundException {
+	public void getUserLocation(){
 		logger.debug("Local is :" +Locale.getDefault());
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
@@ -109,7 +109,7 @@ public class TestTourGuideService {
 	}
 	
 	@Test
-	public void trackUser() throws UserNotFoundException {
+	public void trackUser(){
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();
@@ -129,13 +129,11 @@ public class TestTourGuideService {
 	}
 
 	/**
-	 *
-	 * @throws UserNotFoundException
 	 * Location location latitude and longitude are close to Disneyland (33.817595, -117.922008)
 	 * When using tracker, long and lat are often negative and can't find a nearbyAttractions
 	 */
 	@Test
-	public void getNearbyAttractions() throws UserNotFoundException {
+	public void getNearbyAttractions(){
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();
@@ -157,6 +155,10 @@ public class TestTourGuideService {
 		
 		assertEquals(4, attractions.size());
 	}
+
+	/**
+	 * in this test the new user=user don't have any
+	 */
 	@Test
 	public void getTripDeals() {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -174,7 +176,7 @@ public class TestTourGuideService {
 		
 		tourGuideService.tracker.stopTracking();
 		
-		assertEquals(10, providers.size());
+		assertEquals(5, providers.size());
 	}
 	
 	
