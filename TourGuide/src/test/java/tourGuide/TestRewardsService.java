@@ -42,10 +42,10 @@ public class TestRewardsService {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(rewardsService, gpsUtil);
+		GpsService gpsService = new GpsService(gpsUtil);
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, userDao, gpsService, tripDealsService);
+		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
 		InternalTestHelper.setInternalUserNumber(0);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
@@ -73,10 +73,10 @@ public class TestRewardsService {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(rewardsService, gpsUtil);
+		GpsService gpsService = new GpsService(gpsUtil);
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, userDao, gpsService, tripDealsService);
+		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
 
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
