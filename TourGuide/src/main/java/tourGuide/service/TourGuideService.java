@@ -75,8 +75,8 @@ public class TourGuideService {
 		return gpsService.trackUserLocation(user);
 	}
 
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		return gpsService.getNearByAttractions(visitedLocation);
+	public List<Attraction> getNearByAttractions(User user) {
+		return gpsService.getNearByAttractions(user);
 	}
 
 	private void addShutDownHook() {
