@@ -40,9 +40,10 @@ public class TestRewardsService {
 	@Test
 	public void userGetRewards(){
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
@@ -62,7 +63,8 @@ public class TestRewardsService {
 	@Test
 	public void isWithinAttractionProximity() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
@@ -71,9 +73,10 @@ public class TestRewardsService {
 	@Test
 	public void nearAllAttractions() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);

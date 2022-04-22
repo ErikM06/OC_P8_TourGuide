@@ -55,7 +55,7 @@ public class TourGuideService {
 
 	public VisitedLocation trackUserLocation(User user){
 		//  VisitedLocation visitedLocation = userDao.getUserFromUserName(user.getUserName()).getLastVisitedLocation();
-		VisitedLocation visitedLocation = gpsService.getUserLocationService(user.getUserId());
+		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;

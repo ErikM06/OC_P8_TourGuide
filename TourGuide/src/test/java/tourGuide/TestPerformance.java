@@ -57,14 +57,14 @@ public class TestPerformance {
 	@Test
 	public void highVolumeTrackLocation(){
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100);
 		List<User> allUsers = new ArrayList<>();
 		allUsers = userDao.getAllUsers();
 		
@@ -84,9 +84,10 @@ public class TestPerformance {
 	@Test
 	public void highVolumeGetRewards() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);

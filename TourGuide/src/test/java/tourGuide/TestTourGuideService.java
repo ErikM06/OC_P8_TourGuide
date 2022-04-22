@@ -47,9 +47,10 @@ public class TestTourGuideService {
 	public void getUserLocation(){
 		logger.debug("Local is :" +Locale.getDefault());
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
@@ -63,9 +64,10 @@ public class TestTourGuideService {
 	@Test
 	public void addUser() throws UserNotFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
@@ -89,9 +91,10 @@ public class TestTourGuideService {
 	@Test
 	public void getAllUsers() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
@@ -113,9 +116,10 @@ public class TestTourGuideService {
 	@Test
 	public void trackUser(){
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
@@ -137,9 +141,10 @@ public class TestTourGuideService {
 	@Test
 	public void getNearbyAttractions(){
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
@@ -164,9 +169,10 @@ public class TestTourGuideService {
 	@Test
 	public void getTripDeals() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 		UserDao userDao=new UserDao(internalTestService);
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, userDao, gpsService, tripDealsService);
