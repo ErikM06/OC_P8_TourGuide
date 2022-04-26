@@ -1,35 +1,36 @@
 package tourGuide.service.util;
 
-import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tourGuide.model.User;
 import tourGuide.service.GpsService;
-import tourGuide.user.User;
 
-import javax.annotation.concurrent.ThreadSafe;
-import java.util.concurrent.*;
+import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 
-public class ThreadTrackUserLocation implements  Callable<VisitedLocation>{
+public class ThreadTrackUserLocation implements Supplier<VisitedLocation> {
 
     Logger logger = LoggerFactory.getLogger(ThreadTrackUserLocation.class);
 
-    private final GpsUtil gpsUtil;
+    private final GpsService gpsService;
 
     private final User user;
 
-    public ThreadTrackUserLocation(GpsUtil gpsUtil, User user) {
-        this.gpsUtil = gpsUtil;
+    public ThreadTrackUserLocation(GpsService gpsService, User user) {
+        this.gpsService = gpsService;
         this.user = user;
     }
 
+
     @Override
-    public VisitedLocation call() throws Exception {
-        VisitedLocation visitedLocation = gpsUtil.getUserLocation(this.user.getUserId());
+    public VisitedLocation get() {
+        Locale.setDefault(Locale.US);
+        VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
+        user.addToVisitedLocations(visitedLocation);
         return visitedLocation;
     }
-
-
 }
 

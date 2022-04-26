@@ -1,7 +1,8 @@
 package tourGuide.service;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +11,10 @@ import org.springframework.stereotype.Service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.DAO.UserDao;
+import tourGuide.service.util.ThreadTrackUserLocation;
 import tourGuide.tracker.Tracker;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
+import tourGuide.model.User;
+import tourGuide.model.UserReward;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 
@@ -53,12 +55,16 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public VisitedLocation trackUserLocation(User user){
-		//  VisitedLocation visitedLocation = userDao.getUserFromUserName(user.getUserName()).getLastVisitedLocation();
-		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
-		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
-		return visitedLocation;
+	public void trackUserLocation(User user){
+		ThreadTrackUserLocation threadTrackUserLocation = new ThreadTrackUserLocation(gpsService, user);
+		ExecutorService executorService = Executors.newFixedThreadPool(100);
+		CompletableFuture<VisitedLocation> completableFuture = CompletableFuture.supplyAsync(threadTrackUserLocation);
+		CompletableFuture<Void> future = completableFuture.thenRun(new Runnable() {
+			@Override
+			public void run() {
+				rewardsService.calculateRewards(user);
+			}
+		});
 	}
 
 	/**
@@ -96,6 +102,7 @@ public class TourGuideService {
 					}
 			);
 		});
+		logger.debug("in List<Attraction> getNearByAttractions(User user), nearbyAttractions list size is : "+nearbyAttractions.size());
 		return nearbyAttractions;
 	}
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import tourGuide.customExceptions.UserAlreadyExistException;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.user.User;
+import tourGuide.model.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

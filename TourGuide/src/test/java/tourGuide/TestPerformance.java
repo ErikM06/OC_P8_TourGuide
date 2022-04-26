@@ -24,7 +24,7 @@ import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.TripDealsService;
-import tourGuide.user.User;
+import tourGuide.model.User;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -2,7 +2,7 @@ package tourGuide.service;
 
 import org.springframework.stereotype.Service;
 import tourGuide.repository.InternalTestService;
-import tourGuide.user.User;
+import tourGuide.model.User;
 import tripPricer.Provider;
 import tripPricer.TripPricer;
 

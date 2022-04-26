@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tourGuide.repository.InternalTestService;
 import tourGuide.customExceptions.UserNotFoundException;
-import tourGuide.user.User;
+import tourGuide.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;

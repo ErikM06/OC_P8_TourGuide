@@ -28,8 +28,8 @@ import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.TripDealsService;
-import tourGuide.user.User;
-import tourGuide.user.UserPreferences;
+import tourGuide.model.User;
+import tourGuide.model.UserPreferences;
 import tripPricer.Provider;
 
 

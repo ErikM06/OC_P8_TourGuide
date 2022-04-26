@@ -2,6 +2,7 @@ package tourGuide;
 
 import java.util.List;
 
+import com.jsoniter.annotation.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,8 +14,10 @@ import gpsUtil.location.VisitedLocation;
 import tourGuide.DAO.UserDao;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.service.GpsService;
+import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
+import tourGuide.model.User;
+import tourGuide.service.util.NearbyAttractionJson;
 import tripPricer.Provider;
 
 @RestController
@@ -22,6 +25,9 @@ public class TourGuideController {
 
 	@Autowired
 	TourGuideService tourGuideService;
+
+    @Autowired
+    RewardsService rewardsService;
 
     @Autowired
     GpsService gpsService;
@@ -51,8 +57,10 @@ public class TourGuideController {
         //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) throws UserNotFoundException {
-    	VisitedLocation visitedLocation = gpsService.trackUserLocation(getUser(userName));
-    	return JsonStream.serialize(tourGuideService.getNearByAttractions(getUser(userName)));
+    	VisitedLocation lastVisitedLocation = gpsService.trackUserLocation(getUser(userName));
+        NearbyAttractionJson nearbyAttractionJson = new NearbyAttractionJson(rewardsService);
+
+    	return JsonStream.serialize(nearbyAttractionJson.getNearbyAttractionInfoAsJson(lastVisitedLocation, tourGuideService.getNearByAttractions(getUser(userName))));
     }
     
     @RequestMapping("/getRewards") 
