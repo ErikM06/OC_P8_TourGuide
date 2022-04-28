@@ -11,6 +11,7 @@ import tourGuide.model.User;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,23 +25,41 @@ public class NearbyAttractionJson {
     public NearbyAttractionJson(RewardsService rewardsService) {
         this.rewardsService = rewardsService;
     }
-
-    public Map<String, JSONArray> getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<Attraction> nearbyAttraction){
+    // Return a new JSON object that contains:
+    // Name of Tourist attraction,
+    // Tourist attractions lat/long,
+    // The user's location lat/long,
+    // The distance in miles between the user's location and each of the attractions.
+    // The reward points for visiting each Attraction.
+    public JSONObject getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<Attraction> nearbyAttraction){
         JSONObject attractionInfoAsJson = new JSONObject();
-        Map<String, JSONArray> jsonArrayMap = new HashMap<>();
-        JSONArray jsonArray = new JSONArray();
+        Map<String,Double> mapOfAttractionDistance = new HashMap<>();
+        Map<String,Integer> mapOfRewards= new HashMap<>();
+        Map<String,JSONArray> mapOfAllLocations = new HashMap<>();
+        Map<String,JSONArray> mapOfUserLocations = new HashMap<>();
 
+        JSONArray userLocation = new JSONArray();
 
         nearbyAttraction.forEach(a -> {
+            JSONArray attractionLocation = new JSONArray();
+            attractionLocation.put(a.latitude);
+            attractionLocation.put(a.longitude);
 
-           double distance = rewardsService.getDistance(a,trackUser.location);
+            mapOfAllLocations.put(a.attractionName,attractionLocation);
 
-           attractionInfoAsJson.put("Attraction name",a.attractionName)
-                   .put("distance",distance)
-                   .put(a.attractionName,rewardsService.getAttractionReward(trackUser.userId,a.attractionId));
-            jsonArray.put(attractionInfoAsJson);
-            jsonArrayMap.put(a.attractionName,jsonArray);
+            mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.location,a));
+            mapOfRewards.put(a.attractionName,rewardsService.getAttractionReward(a.attractionId,trackUser.userId));
         });
-        return jsonArrayMap;
+
+        userLocation.put(trackUser.location.latitude);
+        userLocation.put(trackUser.location.longitude);
+        mapOfUserLocations.put("for UserUUID: "+trackUser.userId.toString(),userLocation);
+
+        attractionInfoAsJson.append("All attractions location : ",mapOfAllLocations);
+        attractionInfoAsJson.append("User location is: ",mapOfUserLocations);
+        attractionInfoAsJson.append("Attraction distances :", mapOfAttractionDistance);
+        attractionInfoAsJson.append("Rewards of each attraction: ", mapOfRewards);
+
+        return attractionInfoAsJson;
     }
 }
