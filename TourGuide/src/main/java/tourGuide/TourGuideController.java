@@ -2,7 +2,6 @@ package tourGuide;
 
 import java.util.List;
 
-import com.jsoniter.annotation.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
-import tourGuide.DAO.UserDao;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
@@ -32,9 +30,6 @@ public class TourGuideController {
     @Autowired
     GpsService gpsService;
 
-    @Autowired
-    UserDao userDao;
-	
     @RequestMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
@@ -90,7 +85,7 @@ public class TourGuideController {
     }
     
     private User getUser(String userName) throws UserNotFoundException {
-    	return userDao.getUserFromUserName(userName);
+    	return tourGuideService.getUserFromUserName(userName);
     }
    
 

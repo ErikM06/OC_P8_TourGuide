@@ -17,12 +17,13 @@ public class Tracker extends Thread {
 	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(5);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final TourGuideService tourGuideService;
+
 	private boolean stop = false;
 
 	public Tracker(TourGuideService tourGuideService) {
 		this.tourGuideService = tourGuideService;
-		
-		executorService.submit(this);
+		logger.debug("launch tracker thread");
+		//executorService.submit(this);
 	}
 	
 	/**
@@ -32,7 +33,7 @@ public class Tracker extends Thread {
 		stop = true;
 		executorService.shutdownNow();
 	}
-	
+
 	@Override
 	public void run() {
 		StopWatch stopWatch = new StopWatch();
@@ -42,11 +43,11 @@ public class Tracker extends Thread {
 				break;
 			}
 			
-			List<User> users = tourGuideService.getAllUsersFromDao();
+			List<User> users = tourGuideService.getAllUsers();
 			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 			stopWatch.start();
 			users.forEach(u -> {
-			//	tourGuideService.trackUserLocation(u);
+		//	tourGuideService.getUserLocation(u);
 			});
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 

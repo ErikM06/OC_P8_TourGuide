@@ -2,7 +2,7 @@ package tourGuide.service;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.DAO.UserDao;
+import tourGuide.customExceptions.UserNotFoundException;
+import tourGuide.repository.InternalTestService;
 import tourGuide.service.util.ThreadTrackUserLocation;
 import tourGuide.tracker.Tracker;
 import tourGuide.model.User;
@@ -22,31 +23,39 @@ import tripPricer.TripPricer;
 public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	private final RewardsService rewardsService;
+
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
-	public final UserDao userDao;
 
 	public final GpsService gpsService;
 
+	private  final InternalTestService internalTestService;
 	public final TripDealsService tripDealsService;
 	boolean testMode = true;
 
-	public TourGuideService(RewardsService rewardsService, UserDao userDao, GpsService gpsService, TripDealsService tripDealsService) {
+	public TourGuideService(RewardsService rewardsService, GpsService gpsService, InternalTestService internalTestService, TripDealsService tripDealsService) {
 		this.rewardsService = rewardsService;
-		this.userDao = userDao;
 		this.gpsService = gpsService;
+		this.internalTestService = internalTestService;
 		this.tripDealsService = tripDealsService;
 
 		if (testMode) {
-			userDao.initializeFromInternalTestService();
+
+			logger.info("TestMode enabled");
+			logger.debug("Initializing users");
+			this.internalTestService.initializeInternalUsers();
+			logger.debug("Finished initializing users");
+
 		}
 		tracker = new Tracker(this);
 		addShutDownHook();
 	}
+	ExecutorService executorService = Executors.newFixedThreadPool(100);
 
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
 	}
+
 
 	public VisitedLocation getUserLocation(User user){
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
@@ -55,16 +64,25 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public void trackUserLocation(User user){
-		ThreadTrackUserLocation threadTrackUserLocation = new ThreadTrackUserLocation(gpsService, user);
-		ExecutorService executorService = Executors.newFixedThreadPool(100);
-		CompletableFuture<VisitedLocation> completableFuture = CompletableFuture.supplyAsync(threadTrackUserLocation);
-		CompletableFuture<Void> future = completableFuture.thenRun(new Runnable() {
-			@Override
-			public void run() {
-				rewardsService.calculateRewards(user);
-			}
-		});
+	public VisitedLocation trackUserLocation(User user) {
+		Locale.setDefault(Locale.US);
+		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
+		user.addToVisitedLocations(visitedLocation);
+		rewardsService.calculateRewards(user);
+		logger.debug("in trackUserLocation, visitedLocation : "+ visitedLocation);
+		return visitedLocation;
+	}
+
+	public void runTrackUser (List<User> userLs) {
+		userLs.forEach (u -> {
+			CompletableFuture<Void> completableFutur;
+			completableFutur = CompletableFuture.runAsync(() -> trackUserLocation(u), executorService)
+					.exceptionally(throwable -> {
+						logger.debug("Something went wrong");
+						return null;
+					});
+				}
+		);
 	}
 
 	/**
@@ -106,22 +124,22 @@ public class TourGuideService {
 		return nearbyAttractions;
 	}
 
-
-	/**
-	 * public User getUser(String userName) throws UserNotFoundException {
-	 *	return internalTestService.getUser(userName);
-	 }*/
-
-	public List<User> getAllUsersFromDao() {
-		return userDao.getAllUsers();
-	}
-
-	public void addNewUser (User user){
-		userDao.addUser(user);
-	}
-
 	public List<Provider> getTripDeals(User user) {
 		return tripDealsService.getTripDeals(user);
+	}
+
+	public User getUserFromUserName (String userName) throws UserNotFoundException {
+		return internalTestService.getUser(userName);
+	}
+
+	public List<User> getAllUsers() {
+		return internalTestService.internalUserMap.values().stream().collect(Collectors.toList());
+	}
+
+	public void addUser(User user) {
+		if (!internalTestService.internalUserMap.containsKey(user.getUserName())) {
+			internalTestService.internalUserMap.put(user.getUserName(), user);
+		}
 	}
 
 	private void addShutDownHook() {
@@ -131,5 +149,7 @@ public class TourGuideService {
 			}
 		});
 	}
+
+
 
 }
