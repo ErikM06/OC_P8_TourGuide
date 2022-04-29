@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -70,12 +71,22 @@ public class TestPerformance {
 
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(10000);
 		List<User> allUsers = tourGuideService.getAllUsers();
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
+		logger.debug("list size: "+allUsers.size());
 		// simulate user being tracked, for each user runTrackUser iterate over all user.
-		allUsers.forEach(u -> tourGuideService.runTrackUser(allUsers));
+		allUsers.forEach(u -> tourGuideService.runTrackUser(u));
+		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) tourGuideService.getExecutorService();
+		while(threadPoolExecutor.getActiveCount() >0) {
+			try {
+				TimeUnit.SECONDS.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 
 		stopWatch.stop();
 		tourGuideService.tracker.stopTracking();

@@ -15,7 +15,7 @@ import tourGuide.service.GpsService;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.model.User;
-import tourGuide.service.util.NearbyAttractionJson;
+import tourGuide.service.util.NearbyAttractionInfo;
 import tripPricer.Provider;
 
 @RestController
@@ -53,7 +53,7 @@ public class TourGuideController {
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) throws UserNotFoundException {
     	VisitedLocation lastVisitedLocation = gpsService.trackUserLocation(getUser(userName));
-        NearbyAttractionJson nearbyAttractionJson = new NearbyAttractionJson(rewardsService);
+        NearbyAttractionInfo nearbyAttractionJson = new NearbyAttractionInfo(rewardsService);
 
     	return JsonStream.serialize(nearbyAttractionJson.getNearbyAttractionInfoAsJson(lastVisitedLocation, tourGuideService.getNearByAttractions(getUser(userName))));
     }

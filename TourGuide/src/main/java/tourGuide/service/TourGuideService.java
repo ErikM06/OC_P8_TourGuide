@@ -33,6 +33,12 @@ public class TourGuideService {
 	public final TripDealsService tripDealsService;
 	boolean testMode = true;
 
+	ExecutorService executorService = Executors.newFixedThreadPool(10000);
+
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
 	public TourGuideService(RewardsService rewardsService, GpsService gpsService, InternalTestService internalTestService, TripDealsService tripDealsService) {
 		this.rewardsService = rewardsService;
 		this.gpsService = gpsService;
@@ -50,7 +56,7 @@ public class TourGuideService {
 		tracker = new Tracker(this);
 		addShutDownHook();
 	}
-	ExecutorService executorService = Executors.newFixedThreadPool(100);
+
 
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
@@ -65,7 +71,6 @@ public class TourGuideService {
 	}
 
 	public VisitedLocation trackUserLocation(User user) {
-		Locale.setDefault(Locale.US);
 		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
@@ -73,16 +78,14 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public void runTrackUser (List<User> userLs) {
-		userLs.forEach (u -> {
-			CompletableFuture<Void> completableFutur;
-			completableFutur = CompletableFuture.runAsync(() -> trackUserLocation(u), executorService)
-					.exceptionally(throwable -> {
-						logger.debug("Something went wrong");
-						return null;
-					});
-				}
-		);
+	public void runTrackUser (User user) {
+
+		CompletableFuture<Void> completableFuture = CompletableFuture
+				.runAsync(() -> trackUserLocation(user), executorService)
+				.exceptionally(throwable -> {
+					logger.debug("Something went wrong");
+					return null;
+				});
 	}
 
 	/**
@@ -141,6 +144,17 @@ public class TourGuideService {
 			internalTestService.internalUserMap.put(user.getUserName(), user);
 		}
 	}
+
+	// TODO: Get a list of every user's most recent location as JSON
+	//- Note: does not use gpsUtil to query for their current location,
+	//        but rather gathers the user's current location from their stored location history.
+	//
+	// Return object should be the just a JSON mapping of userId to Locations similar to:
+	//     {
+	//        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371}
+	//        ...
+	//     }
+
 
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {

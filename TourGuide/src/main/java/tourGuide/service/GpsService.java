@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tourGuide.model.User;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -32,7 +33,8 @@ public class GpsService {
     }
 
     public VisitedLocation trackUserLocation(User user){
-       return gpsUtil.getUserLocation(user.getUserId());
+        Locale.setDefault(Locale.US);
+        return gpsUtil.getUserLocation(user.getUserId());
 
     }
 
