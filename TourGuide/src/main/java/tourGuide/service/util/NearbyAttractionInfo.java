@@ -1,36 +1,38 @@
 package tourGuide.service.util;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import tourGuide.model.User;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NearbyAttractionJson {
+public class NearbyAttractionInfo {
 
     @Autowired
     TourGuideService tourGuideService;
     private final RewardsService rewardsService;
 
-    public NearbyAttractionJson(RewardsService rewardsService) {
+    public NearbyAttractionInfo(RewardsService rewardsService) {
         this.rewardsService = rewardsService;
     }
-    // Return a new JSON object that contains:
-    // Name of Tourist attraction,
-    // Tourist attractions lat/long,
-    // The user's location lat/long,
-    // The distance in miles between the user's location and each of the attractions.
-    // The reward points for visiting each Attraction.
+
+    /**
+     *
+     * @param trackUser last user location
+     * @param nearbyAttraction the 5 nearest attractions
+     * @return a JSONObject with : Name of Tourist attraction,
+     *     Tourist attractions lat/long,
+     *     The user's location lat/long,
+     *     The distance in miles between the user's location and each of the attractions.
+     *     The reward points for visiting each Attraction.
+     */
     public JSONObject getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<Attraction> nearbyAttraction){
         JSONObject attractionInfoAsJson = new JSONObject();
         Map<String,Double> mapOfAttractionDistance = new HashMap<>();
