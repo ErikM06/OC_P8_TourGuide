@@ -23,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.repository.InternalTestService;
-import tourGuide.service.GpsService;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
-import tourGuide.service.TripDealsService;
+import tourGuide.service.*;
 import tourGuide.model.User;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,13 +61,14 @@ public class TestPerformance {
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		UserService userService = new UserService(internalTestService);
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 
-		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService);
+		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(10000);
-		List<User> allUsers = tourGuideService.getAllUsers();
+		List<User> allUsers = userService.getAllUsers();
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		logger.debug("list size: "+allUsers.size());
@@ -107,10 +105,11 @@ public class TestPerformance {
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService(gpsUtil);
+		UserService userService = new UserService(internalTestService);
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
 
-		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService);
+		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		InternalTestHelper.setInternalUserNumber(100);
@@ -118,7 +117,7 @@ public class TestPerformance {
 		stopWatch.start();
 	    Attraction attraction = gpsUtil.getAttractions().get(0);
 		List<User> allUsers = new ArrayList<>();
-		allUsers = tourGuideService.getAllUsers();
+		allUsers = userService.getAllUsers();
 		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 
 	    allUsers.forEach(u -> rewardsService.calculateRewards(u));

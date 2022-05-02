@@ -2,7 +2,6 @@ package tourGuide.service;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +9,8 @@ import org.springframework.stereotype.Service;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.customExceptions.UserNotFoundException;
+import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.repository.InternalTestService;
-import tourGuide.service.util.ThreadTrackUserLocation;
 import tourGuide.tracker.Tracker;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
@@ -31,6 +29,8 @@ public class TourGuideService {
 
 	private  final InternalTestService internalTestService;
 	public final TripDealsService tripDealsService;
+
+	private final UserService userService;
 	boolean testMode = true;
 
 	ExecutorService executorService = Executors.newFixedThreadPool(1000);
@@ -39,11 +39,12 @@ public class TourGuideService {
 		return executorService;
 	}
 
-	public TourGuideService(RewardsService rewardsService, GpsService gpsService, InternalTestService internalTestService, TripDealsService tripDealsService) {
+	public TourGuideService(RewardsService rewardsService, GpsService gpsService, InternalTestService internalTestService, TripDealsService tripDealsService, UserService userService) {
 		this.rewardsService = rewardsService;
 		this.gpsService = gpsService;
 		this.internalTestService = internalTestService;
 		this.tripDealsService = tripDealsService;
+		this.userService = userService;
 
 		if (testMode) {
 
@@ -53,7 +54,7 @@ public class TourGuideService {
 			logger.debug("Finished initializing users");
 
 		}
-		tracker = new Tracker(this);
+		tracker = new Tracker(this, this.userService);
 		addShutDownHook();
 	}
 
@@ -110,11 +111,9 @@ public class TourGuideService {
 		attractionDistances.sort(Collections.reverseOrder());
 		while ( attractionDistances.size()>5){
 			int i=0;
-			logger.debug("in loop "+attractionDistances.get(i) +" last of list"+attractionDistances.get(5));
 			attractionDistances.remove(i);
 		}
 		Collections.sort(attractionDistances);
-		logger.debug("list first in list is"  + attractionDistances.get(0) + " last in list is "+attractionDistances.get(4)+" size is "+attractionDistances.size());
 		attractionDistances.forEach( d -> {
 			allAttractions.forEach(a ->{
 						if (d == rewardsService.getDistance(a, lastVisitedLocation.location)){
@@ -127,23 +126,44 @@ public class TourGuideService {
 		return nearbyAttractions;
 	}
 
+	/**
+	 *
+	 * @param trackUser last user location
+	 * @param nearbyAttraction the 5 nearest attractions
+	 * @return nearbyAttractionsInfoDTO
+	 * with : Name of Tourist attraction,
+	 *     Tourist attractions lat/long,
+	 *     The user's location lat/long,
+	 *     The distance in miles between the user's location and each of the attractions.
+	 *     The reward points for visiting each Attraction.
+	 */
+	public NearbyAttractionsInfoDTO getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<Attraction> nearbyAttraction){
+		NearbyAttractionsInfoDTO nearbyAttractionsInfoDTO = new NearbyAttractionsInfoDTO();
+		Map<String,Double> mapOfAttractionDistance = new HashMap<>();
+		Map<String,Integer> mapOfRewards= new HashMap<>();
+		Map<String,ArrayList<Double>> attractionLatLong = new HashMap<>();
+		
+		nearbyAttraction.forEach(a -> {
+
+			attractionLatLong.put(a.attractionName,new ArrayList<>(Arrays.asList(a.latitude,a.longitude)));
+
+			mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.location,a));
+			mapOfRewards.put(a.attractionName,rewardsService.getAttractionReward(a.attractionId,trackUser.userId));
+		});
+
+		nearbyAttractionsInfoDTO.setUserLocationLatLong(new ArrayList<>(Arrays.asList(trackUser.location.latitude,trackUser.location.longitude)));
+		nearbyAttractionsInfoDTO.setAttractionLatLong(attractionLatLong);
+		nearbyAttractionsInfoDTO.setAttractionDistanceFromUser(mapOfAttractionDistance);
+		nearbyAttractionsInfoDTO.setRewardsForAttractions(mapOfRewards);
+
+		return nearbyAttractionsInfoDTO;
+	}
+
 	public List<Provider> getTripDeals(User user) {
 		return tripDealsService.getTripDeals(user);
 	}
 
-	public User getUserFromUserName (String userName) throws UserNotFoundException {
-		return internalTestService.getUser(userName);
-	}
 
-	public List<User> getAllUsers() {
-		return internalTestService.internalUserMap.values().stream().collect(Collectors.toList());
-	}
-
-	public void addUser(User user) {
-		if (!internalTestService.internalUserMap.containsKey(user.getUserName())) {
-			internalTestService.internalUserMap.put(user.getUserName(), user);
-		}
-	}
 
 	// TODO: Get a list of every user's most recent location as JSON
 	//- Note: does not use gpsUtil to query for their current location,

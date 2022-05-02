@@ -11,11 +11,8 @@ import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
 import tourGuide.customExceptions.UserNotFoundException;
-import tourGuide.service.GpsService;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
+import tourGuide.service.*;
 import tourGuide.model.User;
-import tourGuide.service.util.NearbyAttractionInfo;
 import tripPricer.Provider;
 
 @RestController
@@ -28,6 +25,9 @@ public class TourGuideController {
     RewardsService rewardsService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     GpsService gpsService;
 
     @RequestMapping("/")
@@ -37,30 +37,19 @@ public class TourGuideController {
     
     @RequestMapping("/getLocation") 
     public String getLocation(@RequestParam String userName) throws UserNotFoundException {
-    	VisitedLocation visitedLocation = gpsService.getUserLocationService(getUser(userName).getUserId());
+    	VisitedLocation visitedLocation = gpsService.getUserLocationService(userService.getUserFromUserName(userName).getUserId());
 		return JsonStream.serialize(visitedLocation.location);
     }
-    
-    //  TODO: Change this method to no longer return a List of Attractions.
- 	//  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
- 	//  Return a new JSON object that contains:
-    	// Name of Tourist attraction, 
-        // Tourist attractions lat/long, 
-        // The user's location lat/long, 
-        // The distance in miles between the user's location and each of the attractions.
-        // The reward points for visiting each Attraction.
-        //    Note: Attraction reward points can be gathered from RewardsCentral
+
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) throws UserNotFoundException {
-    	VisitedLocation lastVisitedLocation = gpsService.trackUserLocation(getUser(userName));
-        NearbyAttractionInfo nearbyAttractionJson = new NearbyAttractionInfo(rewardsService);
-
-    	return JsonStream.serialize(nearbyAttractionJson.getNearbyAttractionInfoAsJson(lastVisitedLocation, tourGuideService.getNearByAttractions(getUser(userName))));
+    	VisitedLocation lastVisitedLocation = gpsService.trackUserLocation(userService.getUserFromUserName(userName));
+    	return JsonStream.serialize(tourGuideService.getNearbyAttractionInfoAsJson(lastVisitedLocation, tourGuideService.getNearByAttractions(userService.getUserFromUserName(userName))));
     }
     
     @RequestMapping("/getRewards") 
     public String getRewards(@RequestParam String userName) throws UserNotFoundException {
-    	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
+    	return JsonStream.serialize(tourGuideService.getUserRewards(userService.getUserFromUserName(userName)));
     }
     
     @RequestMapping("/getAllCurrentLocations")
@@ -80,13 +69,10 @@ public class TourGuideController {
     
     @RequestMapping("/getTripDeals")
     public String getTripDeals(@RequestParam String userName) throws UserNotFoundException {
-    	List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
+    	List<Provider> providers = tourGuideService.getTripDeals(userService.getUserFromUserName(userName));
     	return JsonStream.serialize(providers);
     }
     
-    private User getUser(String userName) throws UserNotFoundException {
-    	return tourGuideService.getUserFromUserName(userName);
-    }
-   
+
 
 }
