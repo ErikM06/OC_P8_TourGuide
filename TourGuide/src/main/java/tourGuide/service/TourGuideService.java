@@ -33,7 +33,7 @@ public class TourGuideService {
 	public final TripDealsService tripDealsService;
 	boolean testMode = true;
 
-	ExecutorService executorService = Executors.newFixedThreadPool(10000);
+	ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
 	public ExecutorService getExecutorService() {
 		return executorService;

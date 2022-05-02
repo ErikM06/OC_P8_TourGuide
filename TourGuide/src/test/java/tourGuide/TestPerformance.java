@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.time.StopWatch;
 
@@ -29,7 +28,6 @@ import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.TripDealsService;
 import tourGuide.model.User;
-import tourGuide.service.util.ThreadTrackUserLocation;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -76,8 +74,14 @@ public class TestPerformance {
 	    StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		logger.debug("list size: "+allUsers.size());
+		int nbOfExecutedThread = 0;
+		AtomicInteger i = new AtomicInteger();
+		i.set(0);
 		// simulate user being tracked, for each user runTrackUser iterate over all user.
-		allUsers.forEach(u -> tourGuideService.runTrackUser(u));
+		allUsers.forEach(u -> {
+			tourGuideService.runTrackUser(u);
+			 i.getAndIncrement();
+		});
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) tourGuideService.getExecutorService();
 		while(threadPoolExecutor.getActiveCount() >0) {
 			try {
@@ -86,6 +90,7 @@ public class TestPerformance {
 				e.printStackTrace();
 			}
 		}
+		logger.debug("executed thread :" + i);
 
 
 		stopWatch.stop();
