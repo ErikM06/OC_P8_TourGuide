@@ -1,22 +1,24 @@
 package tourGuide.DTO;
 
 
+import gpsUtil.location.Location;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NearbyAttractionsInfoDTO {
 
-    private Map<String,ArrayList<Double>> attractionLatLong = new HashMap<>();
+    private Map<String,Location> attractionLatLong = new HashMap<>();
 
-    private ArrayList<Double> userLocationLatLong;
+    private Location userLocationLatLong;
 
     private Map<String,Double> attractionDistanceFromUser = new HashMap<>();
 
      private Map<String,Integer> rewardsForAttractions = new HashMap<>();
 
 
-    public NearbyAttractionsInfoDTO(ArrayList<Double> userLocationLatLong, Map<String,ArrayList<Double>> attractionLatLong, Map<String, Double> attractionDistanceFromUser, Map<String, Integer> rewardsForAttractions) {
+    public NearbyAttractionsInfoDTO(Location userLocationLatLong, Map<String,Location> attractionLatLong, Map<String, Double> attractionDistanceFromUser, Map<String, Integer> rewardsForAttractions) {
         this.attractionLatLong = attractionLatLong;
         this.userLocationLatLong = userLocationLatLong;
         this.attractionDistanceFromUser = attractionDistanceFromUser;
@@ -26,11 +28,11 @@ public class NearbyAttractionsInfoDTO {
 
     }
 
-    public ArrayList<Double> getUserLocationLatLong() {
+    public Location getUserLocationLatLong() {
         return userLocationLatLong;
     }
 
-    public void setUserLocationLatLong(ArrayList<Double> userLocationLatLong) {
+    public void setUserLocationLatLong(Location userLocationLatLong) {
         this.userLocationLatLong = userLocationLatLong;
     }
 
@@ -50,11 +52,11 @@ public class NearbyAttractionsInfoDTO {
         this.rewardsForAttractions = rewardsForAttractions;
     }
 
-    public Map<String, ArrayList<Double>> getAttractionLatLong() {
+    public Map<String, Location> getAttractionLatLong() {
         return attractionLatLong;
     }
 
-    public void setAttractionLatLong(Map<String, ArrayList<Double>> attractionLatLong) {
+    public void setAttractionLatLong(Map<String, Location> attractionLatLong) {
         this.attractionLatLong = attractionLatLong;
     }
 }

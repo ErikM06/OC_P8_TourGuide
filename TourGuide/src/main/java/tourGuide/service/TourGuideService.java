@@ -3,6 +3,7 @@ package tourGuide.service;
 import java.util.*;
 import java.util.concurrent.*;
 
+import gpsUtil.location.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -127,7 +128,6 @@ public class TourGuideService {
 	}
 
 	/**
-	 *
 	 * @param trackUser last user location
 	 * @param nearbyAttraction the 5 nearest attractions
 	 * @return nearbyAttractionsInfoDTO
@@ -141,17 +141,17 @@ public class TourGuideService {
 		NearbyAttractionsInfoDTO nearbyAttractionsInfoDTO = new NearbyAttractionsInfoDTO();
 		Map<String,Double> mapOfAttractionDistance = new HashMap<>();
 		Map<String,Integer> mapOfRewards= new HashMap<>();
-		Map<String,ArrayList<Double>> attractionLatLong = new HashMap<>();
-		
+		Map<String,Location> attractionLatLong = new HashMap<>();
+
 		nearbyAttraction.forEach(a -> {
 
-			attractionLatLong.put(a.attractionName,new ArrayList<>(Arrays.asList(a.latitude,a.longitude)));
+			attractionLatLong.put(a.attractionName,new Location(a.latitude,a.longitude));
 
 			mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.location,a));
 			mapOfRewards.put(a.attractionName,rewardsService.getAttractionReward(a.attractionId,trackUser.userId));
 		});
 
-		nearbyAttractionsInfoDTO.setUserLocationLatLong(new ArrayList<>(Arrays.asList(trackUser.location.latitude,trackUser.location.longitude)));
+		nearbyAttractionsInfoDTO.setUserLocationLatLong(trackUser.location);
 		nearbyAttractionsInfoDTO.setAttractionLatLong(attractionLatLong);
 		nearbyAttractionsInfoDTO.setAttractionDistanceFromUser(mapOfAttractionDistance);
 		nearbyAttractionsInfoDTO.setRewardsForAttractions(mapOfRewards);
@@ -174,6 +174,16 @@ public class TourGuideService {
 	//        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371}
 	//        ...
 	//     }
+	public List<Map<String, Location>> getAllCurrentUserlastLocation (List<User> allUsers){
+		List<Map<String,Location>> allCurrentUserLastLocationLs = new ArrayList<>();
+		allUsers.forEach(u -> {
+			Map<String,Location> userIdForLocation = new HashMap<>();
+			userIdForLocation.put(u.getUserId().toString(),u.getLastVisitedLocation().location);
+			allCurrentUserLastLocationLs.add(userIdForLocation);
+
+		});
+		return  allCurrentUserLastLocationLs;
+	}
 
 
 	private void addShutDownHook() {
