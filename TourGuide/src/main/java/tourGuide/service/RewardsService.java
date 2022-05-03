@@ -2,8 +2,13 @@ package tourGuide.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.location.Attraction;
@@ -15,6 +20,8 @@ import tourGuide.model.UserReward;
 
 @Service
 public class RewardsService {
+
+	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
 	private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
 	// proximity in miles
@@ -23,6 +30,12 @@ public class RewardsService {
 	private int attractionProximityRange = 200;
 	private final GpsService gpsService;
 	private final RewardCentral rewardsCentral;
+
+	ExecutorService executorService = Executors.newFixedThreadPool(1000);
+
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
 
 	public RewardsService(GpsService gpsService, RewardCentral rewardCentral) {
 		this.gpsService = gpsService;
@@ -35,6 +48,16 @@ public class RewardsService {
 
 	public void setDefaultProximityBuffer() {
 		proximityBuffer = defaultProximityBuffer;
+	}
+
+	public void asyncTaskCalculateRewards (User user){
+		CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(new Runnable() {
+			@Override
+			public void run() {
+				calculateRewards(user);
+			}
+		}, executorService);
+
 	}
 
 	public void calculateRewards(User user) {
