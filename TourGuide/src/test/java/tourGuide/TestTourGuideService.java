@@ -2,8 +2,7 @@ package tourGuide;
 
 
 import java.util.*;
-
-
+import java.util.concurrent.ThreadLocalRandom;
 
 
 import gpsUtil.GpsUtil;
@@ -190,6 +189,44 @@ public class TestTourGuideService {
 		tourGuideService.tracker.stopTracking();
 
 		assertEquals(5, providers.size());
+	}
+
+	@Test
+	public void getAllCurrentUsers() {
+		GpsUtil gpsUtil = new GpsUtil();
+
+		InternalTestService internalTestService = new InternalTestService();
+		GpsService gpsService = new GpsService(gpsUtil);
+		UserService userService = new UserService(internalTestService);
+		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		TripDealsService tripDealsService = new TripDealsService();
+		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
+
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
+
+		double longitude = ThreadLocalRandom.current().nextDouble(-180.0, 180.0);
+		double latitude = ThreadLocalRandom.current().nextDouble(-85.05112878, 85.05112878);
+		double longitude2 = ThreadLocalRandom.current().nextDouble(-180.0, 180.0);
+		double latitude2 = ThreadLocalRandom.current().nextDouble(-85.05112878, 85.05112878);
+
+		long date = System.currentTimeMillis();
+
+		VisitedLocation lastVisitedLocationUser = new VisitedLocation(UUID.randomUUID(),new Location(latitude,longitude), new Date(date));
+		VisitedLocation lastVisitedLocationUser2 = new VisitedLocation(UUID.randomUUID(),new Location(latitude2,longitude2), new Date(date));
+		user.addToVisitedLocations(lastVisitedLocationUser);
+		user2.addToVisitedLocations(lastVisitedLocationUser2);
+
+		List<User> allUser = new ArrayList<>();
+		allUser.add(user);
+		allUser.add(user2);
+
+		List<Map<String, Location>> getAllLastLocation = tourGuideService.getAllCurrentUserlastLocation(allUser);
+
+		tourGuideService.tracker.stopTracking();
+		
+		assertTrue(getAllLastLocation.get(0).containsValue(lastVisitedLocationUser.location));
+		assertTrue(getAllLastLocation.get(1).containsValue(lastVisitedLocationUser2.location));
 	}
 
 

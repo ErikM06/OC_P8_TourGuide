@@ -12,6 +12,7 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.repository.InternalTestService;
+import tourGuide.service.util.NearbyAttractionInfoAsJson;
 import tourGuide.tracker.Tracker;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
@@ -76,7 +77,6 @@ public class TourGuideService {
 		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
-		logger.debug("in trackUserLocation, visitedLocation : "+ visitedLocation);
 		return visitedLocation;
 	}
 
@@ -85,7 +85,7 @@ public class TourGuideService {
 		CompletableFuture<Void> completableFuture = CompletableFuture
 				.runAsync(() -> trackUserLocation(user), executorService)
 				.exceptionally(throwable -> {
-					logger.debug("Something went wrong");
+					logger.debug("Something went wrong in runTrackUser");
 					return null;
 				});
 	}
@@ -137,26 +137,9 @@ public class TourGuideService {
 	 *     The distance in miles between the user's location and each of the attractions.
 	 *     The reward points for visiting each Attraction.
 	 */
-	public NearbyAttractionsInfoDTO getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<Attraction> nearbyAttraction){
-		NearbyAttractionsInfoDTO nearbyAttractionsInfoDTO = new NearbyAttractionsInfoDTO();
-		Map<String,Double> mapOfAttractionDistance = new HashMap<>();
-		Map<String,Integer> mapOfRewards= new HashMap<>();
-		Map<String,Location> attractionLatLong = new HashMap<>();
-
-		nearbyAttraction.forEach(a -> {
-
-			attractionLatLong.put(a.attractionName,new Location(a.latitude,a.longitude));
-
-			mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.location,a));
-			mapOfRewards.put(a.attractionName,rewardsService.getAttractionReward(a.attractionId,trackUser.userId));
-		});
-
-		nearbyAttractionsInfoDTO.setUserLocationLatLong(trackUser.location);
-		nearbyAttractionsInfoDTO.setAttractionLatLong(attractionLatLong);
-		nearbyAttractionsInfoDTO.setAttractionDistanceFromUser(mapOfAttractionDistance);
-		nearbyAttractionsInfoDTO.setRewardsForAttractions(mapOfRewards);
-
-		return nearbyAttractionsInfoDTO;
+	public NearbyAttractionsInfoDTO getNearbyAttractionInfo(VisitedLocation trackUser, List<Attraction> nearbyAttraction){
+		NearbyAttractionInfoAsJson nearbyAttractionsInfoDTO = new NearbyAttractionInfoAsJson(rewardsService );
+		return nearbyAttractionsInfoDTO.getNearbyAttractionInfoAsJson(trackUser,nearbyAttraction);
 	}
 
 	public List<Provider> getTripDeals(User user) {
