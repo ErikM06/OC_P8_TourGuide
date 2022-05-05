@@ -210,10 +210,8 @@ public class TestTourGuideService {
 		double longitude2 = ThreadLocalRandom.current().nextDouble(-180.0, 180.0);
 		double latitude2 = ThreadLocalRandom.current().nextDouble(-85.05112878, 85.05112878);
 
-		long date = System.currentTimeMillis();
-
-		VisitedLocation lastVisitedLocationUser = new VisitedLocation(UUID.randomUUID(),new Location(latitude,longitude), new Date(date));
-		VisitedLocation lastVisitedLocationUser2 = new VisitedLocation(UUID.randomUUID(),new Location(latitude2,longitude2), new Date(date));
+		VisitedLocation lastVisitedLocationUser = new VisitedLocation(UUID.randomUUID(),new Location(latitude,longitude), new Date(System.currentTimeMillis()));
+		VisitedLocation lastVisitedLocationUser2 = new VisitedLocation(UUID.randomUUID(),new Location(latitude2,longitude2), new Date(System.currentTimeMillis()));
 		user.addToVisitedLocations(lastVisitedLocationUser);
 		user2.addToVisitedLocations(lastVisitedLocationUser2);
 
@@ -224,7 +222,7 @@ public class TestTourGuideService {
 		List<Map<String, Location>> getAllLastLocation = tourGuideService.getAllCurrentUserlastLocation(allUser);
 
 		tourGuideService.tracker.stopTracking();
-		
+
 		assertTrue(getAllLastLocation.get(0).containsValue(lastVisitedLocationUser.location));
 		assertTrue(getAllLastLocation.get(1).containsValue(lastVisitedLocationUser2.location));
 	}
