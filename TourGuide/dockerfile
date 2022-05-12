@@ -1,0 +1,4 @@
+FROM openjdk:11
+WORKDIR /usr/app
+COPY build/libs/tourGuide-1.0.0.jar tourGuide.jar
+CMD  java -jar tourGuide.jar
