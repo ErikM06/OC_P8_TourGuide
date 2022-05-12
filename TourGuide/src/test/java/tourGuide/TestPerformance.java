@@ -57,7 +57,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
@@ -101,7 +101,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();

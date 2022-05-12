@@ -1,12 +1,17 @@
 package tourGuide.service;
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
+import tourGuide.model.location.Attraction;
+import tourGuide.model.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.model.User;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -17,24 +22,38 @@ public class GpsService {
 
     Logger logger = LoggerFactory.getLogger(GpsService.class);
 
-    private final GpsUtil gpsUtil;
+    private final String GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION = "http://localhost:8090/getUserLastVisitedLocation";
+    private final String GPS_UTIL_SERVICE_API_ALL_ATTRACTION = "http://localhost:8090/getAllAttraction";
 
-    public GpsService (GpsUtil gpsUtil){
-        this.gpsUtil = gpsUtil;
-    }
+    private final String USER_ID ="?userId=";
 
+    private UserService userService;
 
-    public VisitedLocation getUserLocationService(UUID userId) {
-        return gpsUtil.getUserLocation(userId);
+    public VisitedLocation getUserLocationService(UUID userId) throws UserNotFoundException {
+       User user =  userService.getUserByUUID(userId);
+        return trackUserLocation(user);
     }
 
     public List<Attraction> getAttractionsService() {
-        return gpsUtil.getAttractions();
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<Attraction>> result =
+                restTemplate.exchange(
+                        GPS_UTIL_SERVICE_API_ALL_ATTRACTION,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<Attraction>>() {}
+                );
+        List<Attraction> allAttractionLs = result.getBody();
+        return allAttractionLs;
     }
 
     public VisitedLocation trackUserLocation(User user){
         Locale.setDefault(Locale.US);
-        return gpsUtil.getUserLocation(user.getUserId());
+        RestTemplate restTemplate = new RestTemplate();
+        VisitedLocation lastVisitedLocation = restTemplate.getForObject(GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION +
+                USER_ID + user.getUserId().toString(),
+                VisitedLocation.class);
+        return lastVisitedLocation;
 
     }
 

@@ -38,7 +38,7 @@ public class TestRewardsService {
 		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();
@@ -60,7 +60,7 @@ public class TestRewardsService {
 	@Test
 	public void isWithinAttractionProximity() {
 		GpsUtil gpsUtil = new GpsUtil();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService();
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
@@ -72,7 +72,7 @@ public class TestRewardsService {
 		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
-		GpsService gpsService = new GpsService(gpsUtil);
+		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
 		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
 		TripDealsService tripDealsService = new TripDealsService();

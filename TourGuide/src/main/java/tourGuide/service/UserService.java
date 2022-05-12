@@ -6,6 +6,8 @@ import tourGuide.model.User;
 import tourGuide.repository.InternalTestService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +21,15 @@ public class UserService {
 
     private User getUser(String userName) throws UserNotFoundException {
         return getUserFromUserName(userName);
+    }
+    public User getUserByUUID (UUID userID) throws UserNotFoundException {
+        User user = null;
+        Optional<User> userOptional = getAllUsers().stream().filter(s -> s.getUserId().equals(userID)).findFirst();
+        if (!userOptional.isPresent()){
+            throw  new UserNotFoundException("user with UUID :"+userID+" not found!");
+        }
+
+       return userOptional.get();
     }
 
 

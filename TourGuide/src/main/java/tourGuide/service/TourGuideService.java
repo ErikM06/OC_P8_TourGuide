@@ -3,13 +3,13 @@ package tourGuide.service;
 import java.util.*;
 import java.util.concurrent.*;
 
-import gpsUtil.location.Location;
+import tourGuide.model.location.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
+import tourGuide.model.location.Attraction;
+import tourGuide.model.location.VisitedLocation;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.util.NearbyAttractionInfoAsJson;

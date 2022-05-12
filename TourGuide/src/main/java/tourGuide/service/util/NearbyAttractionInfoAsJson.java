@@ -1,8 +1,8 @@
 package tourGuide.service.util;
 
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+import tourGuide.model.location.Attraction;
+import tourGuide.model.location.Location;
+import tourGuide.model.location.VisitedLocation;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.service.RewardsService;
 

@@ -11,13 +11,10 @@ import tourGuide.service.RewardsService;
 @Configuration
 public class TourGuideModule {
 	
-	@Bean
-	public GpsUtil getGpsUtil() {
-		return new GpsUtil();
-	}
+
 
 	public GpsService getGpsService (){
-		return new GpsService(getGpsUtil());
+		return new GpsService();
 	}
 	
 	@Bean
