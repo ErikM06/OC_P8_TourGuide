@@ -1,1 +1,0 @@
-memberSearchIndex = [{"p":"tourGuide.helper","c":"InternalTestHelper","l":"getInternalUserNumber()"},{"p":"tourGuide.helper","c":"InternalTestHelper","l":"InternalTestHelper()","url":"%3Cinit%3E()"},{"p":"tourGuide.helper","c":"InternalTestHelper","l":"setInternalUserNumber(int)"}]
