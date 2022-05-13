@@ -1,7 +1,9 @@
 package tourGuide.service;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.VisitedLocationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -12,9 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.model.User;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -22,20 +22,16 @@ public class GpsService {
 
     Logger logger = LoggerFactory.getLogger(GpsService.class);
 
-    private final String GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION = "http://localhost:8090/getUserLastVisitedLocation";
-    private final String GPS_UTIL_SERVICE_API_ALL_ATTRACTION = "http://localhost:8090/getAllAttraction";
-
-    private final String USER_ID ="?userId=";
-
     private UserService userService;
 
-    public VisitedLocation getUserLocationService(UUID userId) throws UserNotFoundException {
-       User user =  userService.getUserByUUID(userId);
+    public VisitedLocationModel getUserLocationService(UUID userId) throws UserNotFoundException {
+        User user =  userService.getUserByUUID(userId);
         return trackUserLocation(user);
     }
 
     public List<AttractionModel> getAttractionsService() {
         RestTemplate restTemplate = new RestTemplate();
+        String GPS_UTIL_SERVICE_API_ALL_ATTRACTION = "http://localhost:8090/getAllAttraction";
         ResponseEntity<List<AttractionModel>> result =
                 restTemplate.exchange(
                         GPS_UTIL_SERVICE_API_ALL_ATTRACTION,
@@ -43,17 +39,24 @@ public class GpsService {
                         null,
                         new ParameterizedTypeReference<List<AttractionModel>>() {}
                 );
-        List<AttractionModel> allAttractionLModels = result.getBody();
-        return allAttractionLModels;
+        List<AttractionModel> allAttractionModels = result.getBody();
+        return allAttractionModels;
     }
 
-    public VisitedLocation trackUserLocation(User user){
-        Locale.setDefault(Locale.US);
+    public VisitedLocationModel trackUserLocation(User user){
+
         RestTemplate restTemplate = new RestTemplate();
-        VisitedLocation lastVisitedLocation = restTemplate.getForObject(GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION +
-                USER_ID + user.getUserId().toString(),
-                VisitedLocation.class);
-        return lastVisitedLocation;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        String GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION = "http://localhost:8090/getUserLastVisitedLocation";
+        String USER_ID = "?userId=";
+        ResponseEntity<VisitedLocationModel> result = restTemplate.getForEntity( GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION + USER_ID + user.getUserId().toString(),
+                VisitedLocationModel.class);
+        VisitedLocationModel trackedLocation = result.getBody();
+        logger.debug("in trackUserLocation GPSservice: "+trackedLocation.locationModel.latitude );
+        return trackedLocation;
 
     }
 

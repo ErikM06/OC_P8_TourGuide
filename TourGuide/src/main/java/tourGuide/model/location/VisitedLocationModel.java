@@ -1,20 +1,23 @@
 package tourGuide.model.location;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 import java.util.UUID;
 
-public class VisitedLocation {
-    public UUID userId;
+public class VisitedLocationModel {
 
-    public Location location;
+    public UUID userId;
+    @JsonProperty("location")
+    public LocationModel locationModel;
     public Date timeVisited;
 
-    public VisitedLocation(UUID userId, Location location, Date timeVisited) {
+    public VisitedLocationModel(UUID userId, LocationModel locationModel, Date timeVisited) {
         this.userId = userId;
-        this.location = location;
+        this.locationModel = locationModel;
         this.timeVisited = timeVisited;
     }
-    public VisitedLocation (){
+    public VisitedLocationModel(){
 
     }
 }

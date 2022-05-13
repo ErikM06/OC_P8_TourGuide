@@ -1,14 +1,16 @@
 package tourGuide.model.location;
 
-public class Location {
+public class LocationModel {
+
     public double longitude;
+
     public double latitude;
 
-    public Location(double latitude, double longitude) {
+    public LocationModel(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    public Location (){
+    public LocationModel(){
 
     }
 }

@@ -1,8 +1,8 @@
 package tourGuide.service.util;
 
 import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.Location;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.LocationModel;
+import tourGuide.model.location.VisitedLocationModel;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.service.RewardsService;
 
@@ -18,21 +18,21 @@ public class NearbyAttractionInfoAsJson {
         this.rewardsService = rewardsService;
     }
 
-    public NearbyAttractionsInfoDTO getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<AttractionModel> nearbyAttractionModel){
+    public NearbyAttractionsInfoDTO getNearbyAttractionInfoAsJson (VisitedLocationModel trackUser, List<AttractionModel> nearbyAttractionModel){
         NearbyAttractionsInfoDTO nearbyAttractionsInfoDTO = new NearbyAttractionsInfoDTO();
         Map<String,Double> mapOfAttractionDistance = new HashMap<>();
         Map<String,Integer> mapOfRewards= new HashMap<>();
-        Map<String, Location> attractionLatLong = new HashMap<>();
+        Map<String, LocationModel> attractionLatLong = new HashMap<>();
 
         nearbyAttractionModel.forEach(a -> {
 
-            attractionLatLong.put(a.attractionName,new Location(a.latitude,a.longitude));
+            attractionLatLong.put(a.attractionName,new LocationModel(a.latitude,a.longitude));
 
-            mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.location,a));
+            mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.locationModel,a));
             mapOfRewards.put(a.attractionName,rewardsService.getAttractionReward(a.attractionId,trackUser.userId));
         });
 
-        nearbyAttractionsInfoDTO.setUserLocationLatLong(trackUser.location);
+        nearbyAttractionsInfoDTO.setUserLocationLatLong(trackUser.locationModel);
         nearbyAttractionsInfoDTO.setAttractionLatLong(attractionLatLong);
         nearbyAttractionsInfoDTO.setAttractionDistanceFromUser(mapOfAttractionDistance);
         nearbyAttractionsInfoDTO.setRewardsForAttractions(mapOfRewards);

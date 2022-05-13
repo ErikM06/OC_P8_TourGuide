@@ -1,7 +1,7 @@
 package tourGuide;
 
 import com.jsoniter.output.JsonStream;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.VisitedLocationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,15 +37,15 @@ public class TourGuideController {
     
     @RequestMapping("/getLocation") 
     public String getLocation(@RequestParam String userName) throws UserNotFoundException {
-    	VisitedLocation visitedLocation = gpsService.getUserLocationService(userService.getUserFromUserName(userName).getUserId());
-		return JsonStream.serialize(visitedLocation.location);
+    	VisitedLocationModel visitedLocationModel = gpsService.getUserLocationService(userService.getUserFromUserName(userName).getUserId());
+		return JsonStream.serialize(visitedLocationModel.locationModel);
     }
 
     @RequestMapping("/getNearbyAttractions") 
     public String getNearbyAttractions(@RequestParam String userName) throws UserNotFoundException {
-    	VisitedLocation lastVisitedLocation = gpsService.trackUserLocation(userService.getUserFromUserName(userName));
+    	VisitedLocationModel lastVisitedLocationModel = gpsService.trackUserLocation(userService.getUserFromUserName(userName));
     	return JsonStream.serialize(tourGuideService.getNearbyAttractionInfo(
-                lastVisitedLocation,
+                lastVisitedLocationModel,
                 tourGuideService.getNearByAttractions(userService.getUserFromUserName(userName))
         ));
     }

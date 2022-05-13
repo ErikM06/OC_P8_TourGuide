@@ -3,13 +3,13 @@ package tourGuide.service;
 import java.util.*;
 import java.util.concurrent.*;
 
-import tourGuide.model.location.Location;
+import tourGuide.model.location.LocationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.VisitedLocationModel;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.util.NearbyAttractionInfoAsJson;
@@ -66,18 +66,18 @@ public class TourGuideService {
 	}
 
 
-	public VisitedLocation getUserLocation(User user){
-		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
+	public VisitedLocationModel getUserLocation(User user){
+		VisitedLocationModel visitedLocationModel = (user.getVisitedLocations().size() > 0) ?
 				user.getLastVisitedLocation() :
 				trackUserLocation(user);
-		return visitedLocation;
+		return visitedLocationModel;
 	}
 
-	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsService.trackUserLocation(user);
-		user.addToVisitedLocations(visitedLocation);
+	public VisitedLocationModel trackUserLocation(User user) {
+		VisitedLocationModel visitedLocationModel = gpsService.trackUserLocation(user);
+		user.addToVisitedLocations(visitedLocationModel);
 		rewardsService.calculateRewards(user);
-		return visitedLocation;
+		return visitedLocationModel;
 	}
 
 	public void runTrackUser (User user) {
@@ -101,11 +101,11 @@ public class TourGuideService {
 	public List<AttractionModel> getNearByAttractions(User user) {
 		List<AttractionModel> nearbyAttractionModels = new ArrayList<>();
 		List<AttractionModel> allAttractionModels = new CopyOnWriteArrayList<>(gpsService.getAttractionsService());
-		VisitedLocation lastVisitedLocation = getUserLocation(user);
+		VisitedLocationModel lastVisitedLocationModel = getUserLocation(user);
 
 		List<Double> attractionDistances = new ArrayList<>();
 		allAttractionModels.forEach(a-> {
-			Double distance = rewardsService.getDistance(a, lastVisitedLocation.location);
+			Double distance = rewardsService.getDistance(a, lastVisitedLocationModel.locationModel);
 			attractionDistances.add(distance);
 		});
 
@@ -117,7 +117,7 @@ public class TourGuideService {
 		Collections.sort(attractionDistances);
 		attractionDistances.forEach( d -> {
 			allAttractionModels.forEach(a ->{
-						if (d == rewardsService.getDistance(a, lastVisitedLocation.location)){
+						if (d == rewardsService.getDistance(a, lastVisitedLocationModel.locationModel)){
 							nearbyAttractionModels.add(a);
 						}
 					}
@@ -137,7 +137,7 @@ public class TourGuideService {
 	 *     The distance in miles between the user's location and each of the attractions.
 	 *     The reward points for visiting each Attraction.
 	 */
-	public NearbyAttractionsInfoDTO getNearbyAttractionInfo(VisitedLocation trackUser, List<AttractionModel> nearbyAttractionModel){
+	public NearbyAttractionsInfoDTO getNearbyAttractionInfo(VisitedLocationModel trackUser, List<AttractionModel> nearbyAttractionModel){
 		NearbyAttractionInfoAsJson nearbyAttractionsInfoDTO = new NearbyAttractionInfoAsJson(rewardsService );
 		return nearbyAttractionsInfoDTO.getNearbyAttractionInfoAsJson(trackUser, nearbyAttractionModel);
 	}
@@ -155,11 +155,11 @@ public class TourGuideService {
 	 * instantiate a map with user's UUID to string and lastLocation.location.
 	 * list is returned.
 	 */
-	public List<Map<String, Location>> getAllCurrentUserlastLocation (List<User> allUsers){
-		List<Map<String,Location>> allCurrentUserLastLocationLs = new ArrayList<>();
+	public List<Map<String, LocationModel>> getAllCurrentUserlastLocation (List<User> allUsers){
+		List<Map<String, LocationModel>> allCurrentUserLastLocationLs = new ArrayList<>();
 		allUsers.forEach(u -> {
-			Map<String,Location> userIdForLocation = new HashMap<>();
-			userIdForLocation.put(u.getUserId().toString(),u.getLastVisitedLocation().location);
+			Map<String, LocationModel> userIdForLocation = new HashMap<>();
+			userIdForLocation.put(u.getUserId().toString(),u.getLastVisitedLocation().locationModel);
 			allCurrentUserLastLocationLs.add(userIdForLocation);
 		});
 		return  allCurrentUserLastLocationLs;

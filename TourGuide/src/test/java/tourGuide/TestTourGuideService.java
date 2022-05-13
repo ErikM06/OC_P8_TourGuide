@@ -17,8 +17,8 @@ import rewardCentral.RewardCentral;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.Location;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.LocationModel;
+import tourGuide.model.location.VisitedLocationModel;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
 import tourGuide.model.User;
@@ -52,9 +52,9 @@ public class TestTourGuideService {
 		tourGuideService.tracker.stopTracking();
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.getUserLocation(user);
+		VisitedLocationModel visitedLocationModel = tourGuideService.getUserLocation(user);
 
-		assertEquals(visitedLocation.userId, user.getUserId());
+		assertEquals(visitedLocationModel.userId, user.getUserId());
 	}
 
 	@Test
@@ -144,9 +144,9 @@ public class TestTourGuideService {
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		// VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
-		Location location = new Location(33.000000,-117.000000);
+		LocationModel locationModel = new LocationModel(33.000000,-117.000000);
 		Date date = new Date(System.currentTimeMillis());
-		VisitedLocation visitedLocation =new VisitedLocation(user.getUserId(),location, date);
+		VisitedLocationModel visitedLocationModel =new VisitedLocationModel(user.getUserId(), locationModel, date);
 
 		List<AttractionModel> attractionModels = tourGuideService.getNearByAttractions(user);
 
@@ -203,21 +203,21 @@ public class TestTourGuideService {
 		double longitude2 = ThreadLocalRandom.current().nextDouble(-180.0, 180.0);
 		double latitude2 = ThreadLocalRandom.current().nextDouble(-85.05112878, 85.05112878);
 
-		VisitedLocation lastVisitedLocationUser = new VisitedLocation(UUID.randomUUID(),new Location(latitude,longitude), new Date(System.currentTimeMillis()));
-		VisitedLocation lastVisitedLocationUser2 = new VisitedLocation(UUID.randomUUID(),new Location(latitude2,longitude2), new Date(System.currentTimeMillis()));
-		user.addToVisitedLocations(lastVisitedLocationUser);
-		user2.addToVisitedLocations(lastVisitedLocationUser2);
+		VisitedLocationModel lastVisitedLocationModelUser = new VisitedLocationModel(UUID.randomUUID(),new LocationModel(latitude,longitude), new Date(System.currentTimeMillis()));
+		VisitedLocationModel lastVisitedLocationModelUser2 = new VisitedLocationModel(UUID.randomUUID(),new LocationModel(latitude2,longitude2), new Date(System.currentTimeMillis()));
+		user.addToVisitedLocations(lastVisitedLocationModelUser);
+		user2.addToVisitedLocations(lastVisitedLocationModelUser2);
 
 		List<User> allUser = new ArrayList<>();
 		allUser.add(user);
 		allUser.add(user2);
 
-		List<Map<String, Location>> getAllLastLocation = tourGuideService.getAllCurrentUserlastLocation(allUser);
+		List<Map<String, LocationModel>> getAllLastLocation = tourGuideService.getAllCurrentUserlastLocation(allUser);
 
 		tourGuideService.tracker.stopTracking();
 
-		assertTrue(getAllLastLocation.get(0).containsValue(lastVisitedLocationUser.location));
-		assertTrue(getAllLastLocation.get(1).containsValue(lastVisitedLocationUser2.location));
+		assertTrue(getAllLastLocation.get(0).containsValue(lastVisitedLocationModelUser.locationModel));
+		assertTrue(getAllLastLocation.get(1).containsValue(lastVisitedLocationModelUser2.locationModel));
 	}
 
 

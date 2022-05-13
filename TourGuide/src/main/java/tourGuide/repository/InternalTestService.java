@@ -1,7 +1,7 @@
 package tourGuide.repository;
 
-import tourGuide.model.location.Location;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.LocationModel;
+import tourGuide.model.location.VisitedLocationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,7 +63,7 @@ public class InternalTestService {
      */
     private void generateUserLocationHistory(User user) {
         IntStream.range(0, 3).forEach(i-> {
-            user.addToVisitedLocations(new VisitedLocation(user.getUserId(), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
+            user.addToVisitedLocations(new VisitedLocationModel(user.getUserId(), new LocationModel(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()));
         });
     }
 

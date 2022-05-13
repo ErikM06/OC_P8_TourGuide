@@ -1,10 +1,8 @@
 package tourGuide.model.location;
 
-import com.jsoniter.annotation.JsonProperty;
-
 import java.util.UUID;
 
-public class AttractionModel extends Location {
+public class AttractionModel extends LocationModel {
 
     public String attractionName;
     public String city;

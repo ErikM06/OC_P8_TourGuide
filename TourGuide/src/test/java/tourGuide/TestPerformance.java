@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.User;
@@ -14,7 +13,7 @@ import tourGuide.model.location.AttractionModel;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
 
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.VisitedLocationModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -114,7 +113,7 @@ public class TestPerformance {
 		List<User> allUsers = new ArrayList<>();
 		allUsers = userService.getAllUsers();
 		//create a visitedLocations for each test User
-		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
+		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocationModel(u.getUserId(), attraction, new Date())));
 
 		AtomicInteger i = new AtomicInteger(0);
 		allUsers.forEach(u -> {

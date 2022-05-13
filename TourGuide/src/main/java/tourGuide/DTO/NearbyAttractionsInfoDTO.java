@@ -1,26 +1,25 @@
 package tourGuide.DTO;
 
 
-import tourGuide.model.location.Location;
+import tourGuide.model.location.LocationModel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NearbyAttractionsInfoDTO {
 
-    private Map<String,Location> attractionLatLong = new HashMap<>();
+    private Map<String, LocationModel> attractionLatLong = new HashMap<>();
 
-    private Location userLocationLatLong;
+    private LocationModel userLocationLatLongModel;
 
     private Map<String,Double> attractionDistanceFromUser = new HashMap<>();
 
      private Map<String,Integer> rewardsForAttractions = new HashMap<>();
 
 
-    public NearbyAttractionsInfoDTO(Location userLocationLatLong, Map<String,Location> attractionLatLong, Map<String, Double> attractionDistanceFromUser, Map<String, Integer> rewardsForAttractions) {
+    public NearbyAttractionsInfoDTO(LocationModel userLocationLatLongModel, Map<String, LocationModel> attractionLatLong, Map<String, Double> attractionDistanceFromUser, Map<String, Integer> rewardsForAttractions) {
         this.attractionLatLong = attractionLatLong;
-        this.userLocationLatLong = userLocationLatLong;
+        this.userLocationLatLongModel = userLocationLatLongModel;
         this.attractionDistanceFromUser = attractionDistanceFromUser;
         this.rewardsForAttractions = rewardsForAttractions;
     }
@@ -28,12 +27,12 @@ public class NearbyAttractionsInfoDTO {
 
     }
 
-    public Location getUserLocationLatLong() {
-        return userLocationLatLong;
+    public LocationModel getUserLocationLatLong() {
+        return userLocationLatLongModel;
     }
 
-    public void setUserLocationLatLong(Location userLocationLatLong) {
-        this.userLocationLatLong = userLocationLatLong;
+    public void setUserLocationLatLong(LocationModel userLocationLatLongModel) {
+        this.userLocationLatLongModel = userLocationLatLongModel;
     }
 
     public Map<String, Double> getAttractionDistanceFromUser() {
@@ -52,11 +51,11 @@ public class NearbyAttractionsInfoDTO {
         this.rewardsForAttractions = rewardsForAttractions;
     }
 
-    public Map<String, Location> getAttractionLatLong() {
+    public Map<String, LocationModel> getAttractionLatLong() {
         return attractionLatLong;
     }
 
-    public void setAttractionLatLong(Map<String, Location> attractionLatLong) {
+    public void setAttractionLatLong(Map<String, LocationModel> attractionLatLong) {
         this.attractionLatLong = attractionLatLong;
     }
 }

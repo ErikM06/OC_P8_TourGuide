@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.Location;
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.LocationModel;
+import tourGuide.model.location.VisitedLocationModel;
 import rewardCentral.RewardCentral;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
@@ -62,7 +62,7 @@ public class RewardsService {
 
 	public void calculateRewards(User user) {
 		List<AttractionModel> attractionModels = new CopyOnWriteArrayList<>( gpsService.getAttractionsService());
-		List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
+		List<VisitedLocationModel> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
 
 		userLocations.forEach(l -> {
 			attractionModels.forEach(a -> {
@@ -78,19 +78,19 @@ public class RewardsService {
 	public int getAttractionReward (UUID attractionId, UUID userId){
 		return rewardsCentral.getAttractionRewardPoints(attractionId,userId);
 	}
-	public boolean isWithinAttractionProximity(AttractionModel attractionModel, Location location) {
-		return getDistance(attractionModel, location) > attractionProximityRange ? false : true;
+	public boolean isWithinAttractionProximity(AttractionModel attractionModel, LocationModel locationModel) {
+		return getDistance(attractionModel, locationModel) > attractionProximityRange ? false : true;
 	}
 
-	private boolean nearAttraction(VisitedLocation visitedLocation, AttractionModel attractionModel) {
-		return getDistance(attractionModel, visitedLocation.location) > proximityBuffer ? false : true;
+	private boolean nearAttraction(VisitedLocationModel visitedLocationModel, AttractionModel attractionModel) {
+		return getDistance(attractionModel, visitedLocationModel.locationModel) > proximityBuffer ? false : true;
 	}
 
 	private int getRewardPoints(AttractionModel attractionModel, User user) {
 		return rewardsCentral.getAttractionRewardPoints(attractionModel.attractionId, user.getUserId());
 	}
 
-	public double getDistance(Location loc1, Location loc2) {
+	public double getDistance(LocationModel loc1, LocationModel loc2) {
 		double lat1 = Math.toRadians(loc1.latitude);
 		double lon1 = Math.toRadians(loc1.longitude);
 		double lat2 = Math.toRadians(loc2.latitude);

@@ -24,7 +24,7 @@ import tourGuide.service.*;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
 
-import tourGuide.model.location.VisitedLocation;
+import tourGuide.model.location.VisitedLocationModel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,7 +53,7 @@ public class TestRewardsService {
 		AttractionModel attraction = gpsService.getAttractionsService().get(0);
 
 
-		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+		user.addToVisitedLocations(new VisitedLocationModel(user.getUserId(), attraction, new Date()));
 		tourGuideService.trackUserLocation(user);
 		List<UserReward> userRewards = user.getUserRewards();
 		tourGuideService.tracker.stopTracking();
