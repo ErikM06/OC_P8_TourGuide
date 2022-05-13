@@ -1,6 +1,7 @@
 package tourGuide;
 
 import com.jsoniter.output.JsonStream;
+import tourGuide.model.ProviderModel;
 import tourGuide.model.location.VisitedLocationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,7 +63,7 @@ public class TourGuideController {
     
     @RequestMapping("/getTripDeals")
     public String getTripDeals(@RequestParam String userName) throws UserNotFoundException {
-    	List<Provider> providers = tourGuideService.getTripDeals(userService.getUserFromUserName(userName));
+    	List<ProviderModel> providers = tourGuideService.getTripDeals(userService.getUserFromUserName(userName));
     	return JsonStream.serialize(providers);
     }
     

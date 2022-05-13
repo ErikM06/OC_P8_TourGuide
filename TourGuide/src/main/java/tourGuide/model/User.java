@@ -17,7 +17,7 @@ public class User {
 	private List<VisitedLocationModel> visitedLocationModels = new ArrayList<>();
 	private List<UserReward> userRewards = new ArrayList<>();
 	private UserPreferences userPreferences = new UserPreferences();
-	private List<Provider> tripDeals = new ArrayList<>();
+	private List<ProviderModel> tripDeals = new ArrayList<>();
 	public User(UUID userId, String userName, String phoneNumber, String emailAddress) {
 		this.userId = userId;
 		this.userName = userName;
@@ -91,11 +91,11 @@ public class User {
 		return visitedLocationModels.get(visitedLocationModels.size() - 1);
 	}
 	
-	public void setTripDeals(List<Provider> tripDeals) {
+	public void setTripDeals(List<ProviderModel> tripDeals) {
 		this.tripDeals = tripDeals;
 	}
 	
-	public List<Provider> getTripDeals() {
+	public List<ProviderModel> getTripDeals() {
 		return tripDeals;
 	}
 

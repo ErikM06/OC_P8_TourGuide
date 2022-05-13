@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import rewardCentral.RewardCentral;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.ProviderModel;
 import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.LocationModel;
 import tourGuide.model.location.VisitedLocationModel;
@@ -177,7 +178,7 @@ public class TestTourGuideService {
 
 		user.setUserPreferences(userPreferencesTest);
 
-		List<Provider> providers = tourGuideService.getTripDeals(user);
+		List<ProviderModel> providers = tourGuideService.getTripDeals(user);
 		logger.debug("in TripDealsTest for provider :"+providers.get(0).name+ "price is : "+providers.get(0).price);
 
 		tourGuideService.tracker.stopTracking();

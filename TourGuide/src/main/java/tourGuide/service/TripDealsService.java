@@ -19,7 +19,6 @@ import java.util.UUID;
 @Service
 public class TripDealsService {
     private Logger logger = LoggerFactory.getLogger(TripDealsService.class);
-    private final TripPricer tripPricer = new TripPricer();
 
     public List<ProviderModel> getTripDeals(User user) {
         int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();

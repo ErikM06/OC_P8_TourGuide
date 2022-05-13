@@ -3,6 +3,7 @@ package tourGuide.service;
 import java.util.*;
 import java.util.concurrent.*;
 
+import tourGuide.model.ProviderModel;
 import tourGuide.model.location.LocationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +143,7 @@ public class TourGuideService {
 		return nearbyAttractionsInfoDTO.getNearbyAttractionInfoAsJson(trackUser, nearbyAttractionModel);
 	}
 
-	public List<Provider> getTripDeals(User user) {
+	public List<ProviderModel> getTripDeals(User user) {
 		return tripDealsService.getTripDeals(user);
 	}
 
