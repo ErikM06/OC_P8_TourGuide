@@ -1,7 +1,7 @@
 package tourGuide.DTO;
 
 
-import gpsUtil.location.Location;
+import tourGuide.model.location.Location;
 
 import java.util.ArrayList;
 import java.util.HashMap;

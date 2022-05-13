@@ -1,19 +1,20 @@
 package tourGuide;
 
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.User;
+import tourGuide.model.location.AttractionModel;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
+
+import tourGuide.model.location.VisitedLocation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestPerformance {
 	Logger logger = LoggerFactory.getLogger(TestPerformance.class);
+
 
 	/*
 	 * A note on performance improvements:
@@ -54,7 +56,6 @@ public class TestPerformance {
 	}
 	@Test
 	public void highVolumeTrackLocation(){
-		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
@@ -98,8 +99,6 @@ public class TestPerformance {
 
 	@Test
 	public void highVolumeGetRewards() {
-		GpsUtil gpsUtil = new GpsUtil();
-
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
@@ -110,7 +109,8 @@ public class TestPerformance {
 		InternalTestHelper.setInternalUserNumber(100);
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		Attraction attraction = gpsUtil.getAttractions().get(0);
+		AttractionModel attraction = gpsService.getAttractionsService().get(0);
+
 		List<User> allUsers = new ArrayList<>();
 		allUsers = userService.getAllUsers();
 		//create a visitedLocations for each test User

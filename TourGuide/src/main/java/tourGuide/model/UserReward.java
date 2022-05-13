@@ -1,22 +1,22 @@
 package tourGuide.model;
 
-import tourGuide.model.location.Attraction;
+import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.VisitedLocation;
 
 public class UserReward {
 
 	public final VisitedLocation visitedLocation;
-	public final Attraction attraction;
+	public final AttractionModel attractionModel;
 	private int rewardPoints;
-	public UserReward(VisitedLocation visitedLocation, Attraction attraction, int rewardPoints) {
+	public UserReward(VisitedLocation visitedLocation, AttractionModel attractionModel, int rewardPoints) {
 		this.visitedLocation = visitedLocation;
-		this.attraction = attraction;
+		this.attractionModel = attractionModel;
 		this.rewardPoints = rewardPoints;
 	}
 	
-	public UserReward(VisitedLocation visitedLocation, Attraction attraction) {
+	public UserReward(VisitedLocation visitedLocation, AttractionModel attractionModel) {
 		this.visitedLocation = visitedLocation;
-		this.attraction = attraction;
+		this.attractionModel = attractionModel;
 	}
 
 	public void setRewardPoints(int rewardPoints) {

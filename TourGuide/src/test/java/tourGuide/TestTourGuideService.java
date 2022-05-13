@@ -5,10 +5,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +16,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import rewardCentral.RewardCentral;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.location.AttractionModel;
+import tourGuide.model.location.Location;
+import tourGuide.model.location.VisitedLocation;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
 import tourGuide.model.User;
@@ -41,7 +41,6 @@ public class TestTourGuideService {
 	@Test
 	public void getUserLocation(){
 		logger.debug("Local is :" +Locale.getDefault());
-		GpsUtil gpsUtil = new GpsUtil();
 		InternalTestService internalTestService = new InternalTestService();
 		UserService userService = new UserService(internalTestService);
 		GpsService gpsService = new GpsService();
@@ -60,7 +59,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void addUser() throws UserNotFoundException {
-		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
@@ -87,7 +85,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void getAllUsers() {
-		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
@@ -113,7 +110,6 @@ public class TestTourGuideService {
 	@Test
 	public void trackUser(){
 
-		GpsUtil gpsUtil = new GpsUtil();
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
@@ -137,7 +133,6 @@ public class TestTourGuideService {
 	 */
 	@Test
 	public void getNearbyAttractions(){
-		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
@@ -153,11 +148,11 @@ public class TestTourGuideService {
 		Date date = new Date(System.currentTimeMillis());
 		VisitedLocation visitedLocation =new VisitedLocation(user.getUserId(),location, date);
 
-		List<Attraction> attractions = tourGuideService.getNearByAttractions(user);
+		List<AttractionModel> attractionModels = tourGuideService.getNearByAttractions(user);
 
 		tourGuideService.tracker.stopTracking();
 
-		assertEquals(5, attractions.size());
+		assertEquals(5, attractionModels.size());
 	}
 
 	/**
@@ -165,7 +160,6 @@ public class TestTourGuideService {
 	 */
 	@Test
 	public void getTripDeals() {
-		GpsUtil gpsUtil = new GpsUtil();
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
@@ -193,7 +187,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void getAllCurrentUsers() {
-		GpsUtil gpsUtil = new GpsUtil();
 
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();

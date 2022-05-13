@@ -1,6 +1,6 @@
 package tourGuide.service.util;
 
-import tourGuide.model.location.Attraction;
+import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.Location;
 import tourGuide.model.location.VisitedLocation;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
@@ -18,13 +18,13 @@ public class NearbyAttractionInfoAsJson {
         this.rewardsService = rewardsService;
     }
 
-    public NearbyAttractionsInfoDTO getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<Attraction> nearbyAttraction){
+    public NearbyAttractionsInfoDTO getNearbyAttractionInfoAsJson (VisitedLocation trackUser, List<AttractionModel> nearbyAttractionModel){
         NearbyAttractionsInfoDTO nearbyAttractionsInfoDTO = new NearbyAttractionsInfoDTO();
         Map<String,Double> mapOfAttractionDistance = new HashMap<>();
         Map<String,Integer> mapOfRewards= new HashMap<>();
         Map<String, Location> attractionLatLong = new HashMap<>();
 
-        nearbyAttraction.forEach(a -> {
+        nearbyAttractionModel.forEach(a -> {
 
             attractionLatLong.put(a.attractionName,new Location(a.latitude,a.longitude));
 

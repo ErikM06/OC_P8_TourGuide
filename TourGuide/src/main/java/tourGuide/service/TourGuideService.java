@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import tourGuide.model.location.Attraction;
+import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.VisitedLocation;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
 import tourGuide.repository.InternalTestService;
@@ -98,13 +98,13 @@ public class TourGuideService {
 	 * which is getDistance between visitedLocation and allAttractions attractions
 	 * then reverse the List en delete record to keep only the 5 closest distances
 	 */
-	public List<Attraction> getNearByAttractions(User user) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		List<Attraction> allAttractions = new CopyOnWriteArrayList<>(gpsService.getAttractionsService());
+	public List<AttractionModel> getNearByAttractions(User user) {
+		List<AttractionModel> nearbyAttractionModels = new ArrayList<>();
+		List<AttractionModel> allAttractionModels = new CopyOnWriteArrayList<>(gpsService.getAttractionsService());
 		VisitedLocation lastVisitedLocation = getUserLocation(user);
 
 		List<Double> attractionDistances = new ArrayList<>();
-		allAttractions.forEach(a-> {
+		allAttractionModels.forEach(a-> {
 			Double distance = rewardsService.getDistance(a, lastVisitedLocation.location);
 			attractionDistances.add(distance);
 		});
@@ -116,20 +116,20 @@ public class TourGuideService {
 		}
 		Collections.sort(attractionDistances);
 		attractionDistances.forEach( d -> {
-			allAttractions.forEach(a ->{
+			allAttractionModels.forEach(a ->{
 						if (d == rewardsService.getDistance(a, lastVisitedLocation.location)){
-							nearbyAttractions.add(a);
+							nearbyAttractionModels.add(a);
 						}
 					}
 			);
 		});
-		logger.debug("in List<Attraction> getNearByAttractions(User user), nearbyAttractions list size is : "+nearbyAttractions.size());
-		return nearbyAttractions;
+		logger.debug("in List<Attraction> getNearByAttractions(User user), nearbyAttractions list size is : "+ nearbyAttractionModels.size());
+		return nearbyAttractionModels;
 	}
 
 	/**
 	 * @param trackUser last user location
-	 * @param nearbyAttraction the 5 nearest attractions
+	 * @param nearbyAttractionModel the 5 nearest attractions
 	 * @return nearbyAttractionsInfoDTO
 	 * with : Name of Tourist attraction,
 	 *     Tourist attractions lat/long,
@@ -137,9 +137,9 @@ public class TourGuideService {
 	 *     The distance in miles between the user's location and each of the attractions.
 	 *     The reward points for visiting each Attraction.
 	 */
-	public NearbyAttractionsInfoDTO getNearbyAttractionInfo(VisitedLocation trackUser, List<Attraction> nearbyAttraction){
+	public NearbyAttractionsInfoDTO getNearbyAttractionInfo(VisitedLocation trackUser, List<AttractionModel> nearbyAttractionModel){
 		NearbyAttractionInfoAsJson nearbyAttractionsInfoDTO = new NearbyAttractionInfoAsJson(rewardsService );
-		return nearbyAttractionsInfoDTO.getNearbyAttractionInfoAsJson(trackUser,nearbyAttraction);
+		return nearbyAttractionsInfoDTO.getNearbyAttractionInfoAsJson(trackUser, nearbyAttractionModel);
 	}
 
 	public List<Provider> getTripDeals(User user) {

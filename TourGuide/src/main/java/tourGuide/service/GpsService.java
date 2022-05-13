@@ -1,6 +1,6 @@
 package tourGuide.service;
 
-import tourGuide.model.location.Attraction;
+import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +34,17 @@ public class GpsService {
         return trackUserLocation(user);
     }
 
-    public List<Attraction> getAttractionsService() {
+    public List<AttractionModel> getAttractionsService() {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<List<Attraction>> result =
+        ResponseEntity<List<AttractionModel>> result =
                 restTemplate.exchange(
                         GPS_UTIL_SERVICE_API_ALL_ATTRACTION,
                         HttpMethod.GET,
                         null,
-                        new ParameterizedTypeReference<List<Attraction>>() {}
+                        new ParameterizedTypeReference<List<AttractionModel>>() {}
                 );
-        List<Attraction> allAttractionLs = result.getBody();
-        return allAttractionLs;
+        List<AttractionModel> allAttractionLModels = result.getBody();
+        return allAttractionLModels;
     }
 
     public VisitedLocation trackUserLocation(User user){
