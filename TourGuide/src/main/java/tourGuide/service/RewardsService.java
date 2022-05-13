@@ -9,8 +9,10 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.web.client.RestTemplate;
 import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.LocationModel;
 import tourGuide.model.location.VisitedLocationModel;
@@ -86,8 +88,19 @@ public class RewardsService {
 		return getDistance(attractionModel, visitedLocationModel.locationModel) > proximityBuffer ? false : true;
 	}
 
-	private int getRewardPoints(AttractionModel attractionModel, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attractionModel.attractionId, user.getUserId());
+	private Integer getRewardPoints(AttractionModel attractionModel, User user) {
+		String URL_TO_REWARD_POINT = "http://localhost:9000/getRewardPoint";
+		String URI_ATTRACTION_UUID = "?attractionId=";
+		String AND = "&";
+		String URI_USER_UUID ="userId=";
+
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Integer> response = restTemplate.getForEntity(URL_TO_REWARD_POINT
+						+URI_ATTRACTION_UUID+attractionModel.attractionId.toString()
+						+AND
+						+URI_USER_UUID+user.getUserId().toString()
+				,Integer.class);
+		return response.getBody();
 	}
 
 	public double getDistance(LocationModel loc1, LocationModel loc2) {

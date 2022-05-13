@@ -52,7 +52,9 @@ public class GpsService {
 
         String GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION = "http://localhost:8090/getUserLastVisitedLocation";
         String USER_ID = "?userId=";
-        ResponseEntity<VisitedLocationModel> result = restTemplate.getForEntity( GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION + USER_ID + user.getUserId().toString(),
+        ResponseEntity<VisitedLocationModel> result = restTemplate.getForEntity( GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION
+                        + USER_ID
+                        + user.getUserId().toString(),
                 VisitedLocationModel.class);
         VisitedLocationModel trackedLocation = result.getBody();
         logger.debug("in trackUserLocation GPSservice: "+trackedLocation.locationModel.latitude );
