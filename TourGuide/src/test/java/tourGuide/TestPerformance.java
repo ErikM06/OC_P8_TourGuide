@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestPerformance {
@@ -116,7 +117,7 @@ public class TestPerformance {
 
 		AtomicInteger i = new AtomicInteger(0);
 		allUsers.forEach(u -> {
-			tourGuideService.asyncTaskCalculateRewards(u);
+			rewardsService.asyncTaskCalculateRewards(u);
 			i.getAndIncrement();
 		});
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) rewardsService.getExecutorService();
@@ -129,7 +130,7 @@ public class TestPerformance {
 		}
 		logger.debug("terminated tasks: "+i);
 		for(User user : allUsers) {
-			assertTrue(user.getUserRewards().size() > 0);
+			assertFalse(user.getUserRewards().isEmpty());
 		}
 		threadPoolExecutor.shutdown();
 		stopWatch.stop();

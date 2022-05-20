@@ -1,23 +1,23 @@
 package tourGuide.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.InvalidMediaTypeException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import tourGuide.model.User;
+import tourGuide.model.UserReward;
+import tourGuide.model.location.AttractionModel;
+import tourGuide.model.location.LocationModel;
+import tourGuide.model.location.VisitedLocationModel;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import org.springframework.web.client.RestTemplate;
-import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.LocationModel;
-import tourGuide.model.location.VisitedLocationModel;
-import tourGuide.model.User;
-import tourGuide.model.UserReward;
 
 @Service
 public class RewardsService {
@@ -53,22 +53,32 @@ public class RewardsService {
 	/**
 	 *
 	 * @param user
+	 * async method to run getUserRewards with simulated high stress from InternalTestHelper
+	 */
+	public void asyncTaskCalculateRewards (User user){
+		CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() ->
+						calculateRewards(user), executorService)
+				.exceptionally(throwable -> {
+					logger.debug("Something went wrong in asyncTaskCalculateRewards");
+					return null;
+				});
+	}
+
+	/**
+	 *
+	 * @param user
 	 * Calculate user rewards for each visitedLocation if it is near an Attraction
 	 * a is AttractionModel
 	 * l is VisistedLocationModel
 	 */
-	public void calculateRewards(User user) {
+	public void calculateRewards(User user) throws NullPointerException {
 		List<AttractionModel> attractionModels = new CopyOnWriteArrayList<>( gpsService.getAttractionsService());
 		List<VisitedLocationModel> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
-		logger.info("in calculateReward, userLocations size :"+userLocations.size());
-		VisitedLocationModel visitedLocationModel= userLocations.get(0);
-		logger.info("visitedLocation: "+visitedLocationModel.locationModel.latitude+" "+visitedLocationModel.locationModel.longitude);
-		logger.info("in calculateReward, attractionModels size :"+attractionModels.size());
+		logger.info("in RewardService : calculateRewards");
 		userLocations.forEach(l -> {
 			attractionModels.forEach(a -> {
 				if (nearAttraction(l, a)) {
 					if (user.getUserRewards().stream().noneMatch(r -> r.attractionModel.attractionName.equals(a.attractionName))) {
-						logger.info("adding to rewards"+a.attractionName);
 						user.addUserReward(new UserReward(l, a, getRewardPoints(a.attractionId, user.getUserId())));
 					}
 				}
@@ -84,7 +94,14 @@ public class RewardsService {
 		return getDistance(attractionModel, visitedLocationModel.locationModel) > proximityBuffer ? false : true;
 	}
 
-	public Integer getRewardPoints(UUID attractionId, UUID userID) {
+	/**
+	 *
+	 * @param attractionId
+	 * @param userID
+	 * @return a random int generated in RewardsCentral micro-service
+	 * @throws InvalidMediaTypeException
+	 */
+	public Integer getRewardPoints(UUID attractionId, UUID userID) throws InvalidMediaTypeException {
 		String URL_TO_REWARD_POINT = "http://localhost:9000/getRewardPoint";
 		String URI_ATTRACTION_UUID = "?attractionId=";
 		String AND = "&";
@@ -99,6 +116,12 @@ public class RewardsService {
 		return response.getBody();
 	}
 
+	/**
+	 *
+	 * @param loc1
+	 * @param loc2
+	 * @return a double the distance between loc1 and loc2
+	 */
 	public double getDistance(LocationModel loc1, LocationModel loc2) {
 		double lat1 = Math.toRadians(loc1.latitude);
 		double lon1 = Math.toRadians(loc1.longitude);

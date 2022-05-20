@@ -1,20 +1,17 @@
 package tourGuide.service;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.VisitedLocationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.model.User;
+import tourGuide.model.location.AttractionModel;
+import tourGuide.model.location.VisitedLocationModel;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Service
@@ -22,11 +19,16 @@ public class GpsService {
 
     Logger logger = LoggerFactory.getLogger(GpsService.class);
 
-    public VisitedLocationModel getUserLocationService(User user) throws UserNotFoundException {
+    public VisitedLocationModel getUserLocationService(User user) {
         return trackUserLocation(user);
     }
 
-    public List<AttractionModel> getAttractionsService() {
+    /**
+     *
+     * @return the list of all Attraction from the GpsUtil micro-service
+     * @throws InvalidMediaTypeException
+     */
+    public List<AttractionModel> getAttractionsService() throws InvalidMediaTypeException {
         RestTemplate restTemplate = new RestTemplate();
         String GPS_UTIL_SERVICE_API_ALL_ATTRACTION = "http://localhost:8090/getAllAttraction";
         ResponseEntity<List<AttractionModel>> result =
@@ -40,7 +42,14 @@ public class GpsService {
         return allAttractionModels;
     }
 
-    public VisitedLocationModel trackUserLocation(User user){
+    /**
+     *
+     * @param user
+     * @return a visitedLocationModel
+     * user last visited location from the GpsUtil micro-service tracker
+     * @throws InvalidMediaTypeException
+     */
+    public VisitedLocationModel trackUserLocation(User user) throws InvalidMediaTypeException{
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();

@@ -1,30 +1,30 @@
 package tourGuide.service;
 
-import java.util.*;
-import java.util.concurrent.*;
-
-import tourGuide.model.ProviderModel;
-import tourGuide.model.location.LocationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import tourGuide.model.location.AttractionModel;
-import tourGuide.model.location.VisitedLocationModel;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
+import tourGuide.model.ProviderModel;
+import tourGuide.model.User;
+import tourGuide.model.UserReward;
+import tourGuide.model.location.AttractionModel;
+import tourGuide.model.location.LocationModel;
+import tourGuide.model.location.VisitedLocationModel;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.util.NearbyAttractionInfoAsJson;
 import tourGuide.tracker.Tracker;
-import tourGuide.model.User;
-import tourGuide.model.UserReward;
-import tripPricer.TripPricer;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	private final RewardsService rewardsService;
 
-	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 
 	public final GpsService gpsService;
@@ -60,14 +60,6 @@ public class TourGuideService {
 		addShutDownHook();
 	}
 
-	public void asyncTaskCalculateRewards (User user){
-		CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() ->
-				getUserRewards(user), executorService)
-		.exceptionally(throwable -> {
-			logger.debug("Something went wrong in asyncTaskCalculateRewards");
-			return null;
-		});
-	}
 
 	public List<UserReward> getUserRewards(User user) {
 		rewardsService.calculateRewards(user);
@@ -83,6 +75,12 @@ public class TourGuideService {
 		return visitedLocationModel;
 	}
 
+	/**
+	 *
+	 * @param user
+	 * @return visitedLocationModel
+	 * the last known user location
+	 */
 	public VisitedLocationModel trackUserLocation(User user) {
 		VisitedLocationModel visitedLocationModel = gpsService.trackUserLocation(user);
 		user.addToVisitedLocations(visitedLocationModel);
@@ -90,6 +88,11 @@ public class TourGuideService {
 		return visitedLocationModel;
 	}
 
+	/**
+	 *
+	 * @param user
+	 * async method to run track user with simulated high stress from InternalTestHelper
+	 */
 	public void asyncTrackUser(User user) {
 
 		CompletableFuture<Void> completableFuture = CompletableFuture
@@ -108,7 +111,7 @@ public class TourGuideService {
 	 * which is getDistance between visitedLocation and allAttractions attractions
 	 * then reverse the List en delete record to keep only the 5 closest distances
 	 */
-	public List<AttractionModel> getNearByAttractions(User user) {
+	public List<AttractionModel> getNearByAttractions(User user) throws NullPointerException {
 		List<AttractionModel> nearbyAttractionModels = new ArrayList<>();
 		List<AttractionModel> allAttractionModels = new CopyOnWriteArrayList<>(gpsService.getAttractionsService());
 		VisitedLocationModel lastVisitedLocationModel = getUserLocation(user);
@@ -175,7 +178,9 @@ public class TourGuideService {
 		return  allCurrentUserLastLocationLs;
 	}
 
-
+	/**
+	 * shut tracker down
+	 */
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {

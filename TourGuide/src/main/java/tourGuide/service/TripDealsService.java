@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -39,8 +40,20 @@ public class TripDealsService {
 
         return providers;
     }
+
+    /**
+     *
+     * @param apiKey
+     * @param attractionId
+     * @param adults
+     * @param children
+     * @param nightsStay
+     * @param rewardsPoints
+     * @return a list of Providers, selected from user preferences, from the TripPricer micro-service
+     * @throws InvalidMediaTypeException
+     */
     public List<ProviderModel> getProvidersFromHTTP (String apiKey, UUID attractionId, int adults, int children, int nightsStay,
-                                                     int rewardsPoints){
+                                                     int rewardsPoints) throws InvalidMediaTypeException {
 
     RestTemplate restTemplate = new RestTemplate();
     String URL_FOR_GET_PROVIDER ="http://localhost:9010/getProvider";
