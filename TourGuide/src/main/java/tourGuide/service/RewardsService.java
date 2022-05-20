@@ -16,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.LocationModel;
 import tourGuide.model.location.VisitedLocationModel;
-import rewardCentral.RewardCentral;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
 
@@ -31,7 +30,7 @@ public class RewardsService {
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
 	private final GpsService gpsService;
-	private final RewardCentral rewardsCentral;
+
 
 	ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
@@ -39,9 +38,8 @@ public class RewardsService {
 		return executorService;
 	}
 
-	public RewardsService(GpsService gpsService, RewardCentral rewardCentral) {
+	public RewardsService(GpsService gpsService) {
 		this.gpsService = gpsService;
-		this.rewardsCentral = rewardCentral;
 	}
 
 	public void setProximityBuffer(int proximityBuffer) {
@@ -52,34 +50,32 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
-	public void asyncTaskCalculateRewards (User user){
-		CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(new Runnable() {
-			@Override
-			public void run() {
-				calculateRewards(user);
-			}
-		}, executorService);
-
-	}
-
+	/**
+	 *
+	 * @param user
+	 * Calculate user rewards for each visitedLocation if it is near an Attraction
+	 * a is AttractionModel
+	 * l is VisistedLocationModel
+	 */
 	public void calculateRewards(User user) {
 		List<AttractionModel> attractionModels = new CopyOnWriteArrayList<>( gpsService.getAttractionsService());
 		List<VisitedLocationModel> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
-
+		logger.info("in calculateReward, userLocations size :"+userLocations.size());
+		VisitedLocationModel visitedLocationModel= userLocations.get(0);
+		logger.info("visitedLocation: "+visitedLocationModel.locationModel.latitude+" "+visitedLocationModel.locationModel.longitude);
+		logger.info("in calculateReward, attractionModels size :"+attractionModels.size());
 		userLocations.forEach(l -> {
 			attractionModels.forEach(a -> {
 				if (nearAttraction(l, a)) {
 					if (user.getUserRewards().stream().noneMatch(r -> r.attractionModel.attractionName.equals(a.attractionName))) {
-						user.addUserReward(new UserReward(l, a, getRewardPoints(a, user)));
+						logger.info("adding to rewards"+a.attractionName);
+						user.addUserReward(new UserReward(l, a, getRewardPoints(a.attractionId, user.getUserId())));
 					}
 				}
 			});
 		});
 	}
 
-	public int getAttractionReward (UUID attractionId, UUID userId){
-		return rewardsCentral.getAttractionRewardPoints(attractionId,userId);
-	}
 	public boolean isWithinAttractionProximity(AttractionModel attractionModel, LocationModel locationModel) {
 		return getDistance(attractionModel, locationModel) > attractionProximityRange ? false : true;
 	}
@@ -88,7 +84,7 @@ public class RewardsService {
 		return getDistance(attractionModel, visitedLocationModel.locationModel) > proximityBuffer ? false : true;
 	}
 
-	private Integer getRewardPoints(AttractionModel attractionModel, User user) {
+	public Integer getRewardPoints(UUID attractionId, UUID userID) {
 		String URL_TO_REWARD_POINT = "http://localhost:9000/getRewardPoint";
 		String URI_ATTRACTION_UUID = "?attractionId=";
 		String AND = "&";
@@ -96,9 +92,9 @@ public class RewardsService {
 
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<Integer> response = restTemplate.getForEntity(URL_TO_REWARD_POINT
-						+URI_ATTRACTION_UUID+attractionModel.attractionId.toString()
+						+URI_ATTRACTION_UUID+attractionId.toString()
 						+AND
-						+URI_USER_UUID+user.getUserId().toString()
+						+URI_USER_UUID+userID.toString()
 				,Integer.class);
 		return response.getBody();
 	}

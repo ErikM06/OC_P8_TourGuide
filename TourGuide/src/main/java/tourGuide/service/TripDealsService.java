@@ -20,6 +20,15 @@ import java.util.UUID;
 public class TripDealsService {
     private Logger logger = LoggerFactory.getLogger(TripDealsService.class);
 
+    /**
+     *
+     * @param user
+     * @return a list of provider
+     * with the name of the provider
+     * the price of provider calculated from user preferences and rewards
+     * the trip id
+     *
+     */
     public List<ProviderModel> getTripDeals(User user) {
         int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
         List<ProviderModel> providers = getProvidersFromHTTP(InternalTestService.tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),

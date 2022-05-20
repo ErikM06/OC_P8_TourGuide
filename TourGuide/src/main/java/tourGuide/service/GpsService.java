@@ -22,10 +22,7 @@ public class GpsService {
 
     Logger logger = LoggerFactory.getLogger(GpsService.class);
 
-    private UserService userService;
-
-    public VisitedLocationModel getUserLocationService(UUID userId) throws UserNotFoundException {
-        User user =  userService.getUserByUUID(userId);
+    public VisitedLocationModel getUserLocationService(User user) throws UserNotFoundException {
         return trackUserLocation(user);
     }
 
@@ -57,7 +54,7 @@ public class GpsService {
                         + user.getUserId().toString(),
                 VisitedLocationModel.class);
         VisitedLocationModel trackedLocation = result.getBody();
-        logger.debug("in trackUserLocation GPSservice: "+trackedLocation.locationModel.latitude );
+        logger.debug("in trackUserLocation GPSservice");
         return trackedLocation;
 
     }

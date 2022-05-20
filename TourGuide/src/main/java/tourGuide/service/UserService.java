@@ -23,7 +23,6 @@ public class UserService {
         return getUserFromUserName(userName);
     }
     public User getUserByUUID (UUID userID) throws UserNotFoundException {
-        User user = null;
         Optional<User> userOptional = getAllUsers().stream().filter(s -> s.getUserId().equals(userID)).findFirst();
         if (!userOptional.isPresent()){
             throw  new UserNotFoundException("user with UUID :"+userID+" not found!");

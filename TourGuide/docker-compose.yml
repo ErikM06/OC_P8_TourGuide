@@ -11,14 +11,14 @@ services:
     gpsUtil: 
         image: gpsservice:1.0.0
         ports:
-        - "5000:5000"
+        - "8090:8090"
 
     rewardsCentral:
         image: rewardservice:1.0.0
         ports:
-        - "6000:6000"
+        - "9000:9000"
 
     tripPricer:
         image: pricerservice:1.0.0 
         ports:
-        - "7000:7000"
+        - "9010:9010"

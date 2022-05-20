@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.location.AttractionModel;
+import tourGuide.model.location.LocationModel;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
 import tourGuide.model.User;
@@ -43,21 +44,22 @@ public class TestRewardsService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
-		InternalTestHelper.setInternalUserNumber(0);
+		InternalTestHelper.setInternalUserNumber(100);
 		
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		AttractionModel attraction = gpsService.getAttractionsService().get(0);
+		AttractionModel attractionLoc = gpsService.getAttractionsService().get(0);
+		// create a new locationModel with the lat and long of a known attraction to be sure that user lastloc and attraction location are equal
+		LocationModel locationModelFromAttraction = new LocationModel(attractionLoc.latitude,attractionLoc.longitude);
 
+		user.addToVisitedLocations(new VisitedLocationModel(user.getUserId(), locationModelFromAttraction, new Date()));
 
-		user.addToVisitedLocations(new VisitedLocationModel(user.getUserId(), attraction, new Date()));
-		tourGuideService.trackUserLocation(user);
-		List<UserReward> userRewards = user.getUserRewards();
+		List<UserReward> userRewards = tourGuideService.getUserRewards(user);
 		tourGuideService.tracker.stopTracking();
-		logger.debug(" in @Test userGetReword(), reward point is :"+userRewards.get(0).getRewardPoints());
+		logger.debug(" in @Test userGetReward(), reward point is :"+userRewards.get(0).getRewardPoints());
 
 		assertEquals(1, userRewards.size());
 	}
@@ -65,7 +67,7 @@ public class TestRewardsService {
 	@Test
 	public void isWithinAttractionProximity() {
 		GpsService gpsService = new GpsService();
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		AttractionModel attraction = gpsService.getAttractionsService().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
@@ -77,13 +79,13 @@ public class TestRewardsService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
-		InternalTestHelper.setInternalUserNumber(1);
+		InternalTestHelper.setInternalUserNumber(100);
 
 		
 		rewardsService.calculateRewards(userService.getAllUsers().get(0));

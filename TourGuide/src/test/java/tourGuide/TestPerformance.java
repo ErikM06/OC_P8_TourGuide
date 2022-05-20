@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rewardCentral.RewardCentral;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.User;
 import tourGuide.model.location.AttractionModel;
@@ -59,12 +58,12 @@ public class TestPerformance {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(10000);
+		InternalTestHelper.setInternalUserNumber(5);
 		List<User> allUsers = userService.getAllUsers();
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -74,7 +73,7 @@ public class TestPerformance {
 		i.set(0);
 		// simulate user being tracked, for each user runTrackUser iterate over all user.
 		allUsers.forEach(u -> {
-			tourGuideService.runTrackUser(u);
+			tourGuideService.asyncTrackUser(u);
 			i.getAndIncrement();
 		});
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) tourGuideService.getExecutorService();
@@ -101,11 +100,11 @@ public class TestPerformance {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(5);
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		AttractionModel attraction = gpsService.getAttractionsService().get(0);
@@ -117,7 +116,7 @@ public class TestPerformance {
 
 		AtomicInteger i = new AtomicInteger(0);
 		allUsers.forEach(u -> {
-			rewardsService.asyncTaskCalculateRewards(u);
+			tourGuideService.asyncTaskCalculateRewards(u);
 			i.getAndIncrement();
 		});
 		ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) rewardsService.getExecutorService();

@@ -1,12 +1,11 @@
 package tourGuide.model;
 
+import tourGuide.model.location.VisitedLocationModel;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import tourGuide.model.location.VisitedLocationModel;
-import tripPricer.Provider;
 
 public class User {
 	private final UUID userId;
@@ -70,9 +69,7 @@ public class User {
 	}
 	
 	public void addUserReward(UserReward userReward) {
-		if(userRewards.stream().filter(r -> r.attractionModel.attractionName.equals(userReward.attractionModel.attractionName)).count() == 0) {
-			userRewards.add(userReward);
-		}
+		userRewards.add(userReward);
 	}
 	
 	public List<UserReward> getUserRewards() {

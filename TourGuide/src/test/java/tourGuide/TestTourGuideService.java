@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import rewardCentral.RewardCentral;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.ProviderModel;
@@ -24,7 +23,6 @@ import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
-import tripPricer.Provider;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +43,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		UserService userService = new UserService(internalTestService);
 		GpsService gpsService = new GpsService();
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 		InternalTestHelper.setInternalUserNumber(0);
@@ -64,7 +62,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
@@ -90,7 +88,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
@@ -114,7 +112,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
@@ -138,7 +136,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
@@ -164,7 +162,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 
@@ -192,7 +190,7 @@ public class TestTourGuideService {
 		InternalTestService internalTestService = new InternalTestService();
 		GpsService gpsService = new GpsService();
 		UserService userService = new UserService(internalTestService);
-		RewardsService rewardsService = new RewardsService(gpsService, new RewardCentral());
+		RewardsService rewardsService = new RewardsService(gpsService);
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 

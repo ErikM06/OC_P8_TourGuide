@@ -47,8 +47,6 @@ public class InternalTestService {
         logger.debug("Created " + InternalTestHelper.getInternalUserNumber() + " internal test users.");
     }
 
-
-
     public User getUser(String userName) throws UserNotFoundException {
         User internalUser = internalUserMap.get(userName);
         if (!internalUserMap.containsKey(userName)){

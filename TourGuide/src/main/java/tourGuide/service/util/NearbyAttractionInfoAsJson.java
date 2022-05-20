@@ -29,7 +29,7 @@ public class NearbyAttractionInfoAsJson {
             attractionLatLong.put(a.attractionName,new LocationModel(a.latitude,a.longitude));
 
             mapOfAttractionDistance.put(a.attractionName, rewardsService.getDistance(trackUser.locationModel,a));
-            mapOfRewards.put(a.attractionName,rewardsService.getAttractionReward(a.attractionId,trackUser.userId));
+            mapOfRewards.put(a.attractionName,rewardsService.getRewardPoints(a.attractionId,trackUser.userId));
         });
 
         nearbyAttractionsInfoDTO.setUserLocationLatLong(trackUser.locationModel);

@@ -10,16 +10,16 @@ public class NearbyAttractionsInfoDTO {
 
     private Map<String, LocationModel> attractionLatLong = new HashMap<>();
 
-    private LocationModel userLocationLatLongModel;
+    private LocationModel userLocationLatLong;
 
     private Map<String,Double> attractionDistanceFromUser = new HashMap<>();
 
      private Map<String,Integer> rewardsForAttractions = new HashMap<>();
 
 
-    public NearbyAttractionsInfoDTO(LocationModel userLocationLatLongModel, Map<String, LocationModel> attractionLatLong, Map<String, Double> attractionDistanceFromUser, Map<String, Integer> rewardsForAttractions) {
+    public NearbyAttractionsInfoDTO(LocationModel userLocationLatLong, Map<String, LocationModel> attractionLatLong, Map<String, Double> attractionDistanceFromUser, Map<String, Integer> rewardsForAttractions) {
         this.attractionLatLong = attractionLatLong;
-        this.userLocationLatLongModel = userLocationLatLongModel;
+        this.userLocationLatLong = userLocationLatLong;
         this.attractionDistanceFromUser = attractionDistanceFromUser;
         this.rewardsForAttractions = rewardsForAttractions;
     }
@@ -28,11 +28,11 @@ public class NearbyAttractionsInfoDTO {
     }
 
     public LocationModel getUserLocationLatLong() {
-        return userLocationLatLongModel;
+        return userLocationLatLong;
     }
 
     public void setUserLocationLatLong(LocationModel userLocationLatLongModel) {
-        this.userLocationLatLongModel = userLocationLatLongModel;
+        this.userLocationLatLong = userLocationLatLongModel;
     }
 
     public Map<String, Double> getAttractionDistanceFromUser() {

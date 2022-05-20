@@ -17,7 +17,6 @@ import tourGuide.service.util.NearbyAttractionInfoAsJson;
 import tourGuide.tracker.Tracker;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
-import tripPricer.Provider;
 import tripPricer.TripPricer;
 
 @Service
@@ -61,8 +60,18 @@ public class TourGuideService {
 		addShutDownHook();
 	}
 
+	public void asyncTaskCalculateRewards (User user){
+		CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() ->
+				getUserRewards(user), executorService)
+		.exceptionally(throwable -> {
+			logger.debug("Something went wrong in asyncTaskCalculateRewards");
+			return null;
+		});
+	}
 
 	public List<UserReward> getUserRewards(User user) {
+		rewardsService.calculateRewards(user);
+		logger.info("visited location "+user.getVisitedLocations().size());
 		return user.getUserRewards();
 	}
 
@@ -81,7 +90,7 @@ public class TourGuideService {
 		return visitedLocationModel;
 	}
 
-	public void runTrackUser (User user) {
+	public void asyncTrackUser(User user) {
 
 		CompletableFuture<Void> completableFuture = CompletableFuture
 				.runAsync(() -> trackUserLocation(user), executorService)
