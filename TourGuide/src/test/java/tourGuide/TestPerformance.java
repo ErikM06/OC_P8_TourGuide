@@ -64,7 +64,7 @@ public class TestPerformance {
 
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(5);
+		InternalTestHelper.setInternalUserNumber(100000);
 		List<User> allUsers = userService.getAllUsers();
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -105,7 +105,7 @@ public class TestPerformance {
 		TripDealsService tripDealsService = new TripDealsService();
 		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(5);
+		InternalTestHelper.setInternalUserNumber(100000);
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		AttractionModel attraction = gpsService.getAttractionsService().get(0);
