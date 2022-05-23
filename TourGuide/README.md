@@ -33,6 +33,13 @@ TourGuide se décompose en 4 microservice :
 2. Run l'application
 `$ gradle bootRun`
 
+#### IMPORTANT
+Pour pouvoir lancer l'application en local il faut remplacer les ports "gpsUtil:", "tripPricer:", "rewardsCentral:" par "localhost:" dans :
+-GpsService.java 
+-TripDealsService.java
+-RewardsService.java
+Les ports actuels permettent un deployement par Docker.
+
 ### Docker :
 1. Builder l'application avec gradle (n° 1 vu ci-dessus).
 
