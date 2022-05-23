@@ -56,7 +56,7 @@ public class TripDealsService {
                                                      int rewardsPoints) throws InvalidMediaTypeException {
 
     RestTemplate restTemplate = new RestTemplate();
-    String URL_FOR_GET_PROVIDER ="http://tripPricer:9010/getProvider";
+    String URL_FOR_GET_PROVIDER ="http://localhost:9010/getProvider";
     String URI_API="apiKey=";
     String URI_ATTRACTION_ID="attractionId=";
     String URI_NUMBER_ADULT="adults=";

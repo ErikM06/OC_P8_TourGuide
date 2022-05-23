@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.model.ProviderModel;
+import tourGuide.model.User;
+import tourGuide.model.UserPreferences;
 import tourGuide.model.UserReward;
 import tourGuide.model.location.VisitedLocationModel;
 import tourGuide.service.GpsService;
@@ -110,6 +112,7 @@ public class TourGuideController {
     	List<ProviderModel> providers = tourGuideService.getTripDeals(userService.getUserFromUserName(userName));
     	return JsonStream.serialize(providers);
     }
+
     
 
 

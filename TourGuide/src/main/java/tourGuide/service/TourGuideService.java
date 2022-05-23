@@ -4,8 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tourGuide.DTO.NearbyAttractionsInfoDTO;
+import tourGuide.DTO.UserPreferencesDTO;
+import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.model.ProviderModel;
 import tourGuide.model.User;
+import tourGuide.model.UserPreferences;
 import tourGuide.model.UserReward;
 import tourGuide.model.location.AttractionModel;
 import tourGuide.model.location.LocationModel;
@@ -176,6 +179,12 @@ public class TourGuideService {
 			allCurrentUserLastLocationLs.add(userIdForLocation);
 		});
 		return  allCurrentUserLastLocationLs;
+	}
+
+	public UserPreferences updateUserPreferences(String userName, UserPreferencesDTO userPreferencesDTO) throws UserNotFoundException {
+		User user= userService.getUserFromUserName(userName);
+		user.setUserPreferences(new UserPreferences(userPreferencesDTO));
+		return user.getUserPreferences();
 	}
 
 	/**

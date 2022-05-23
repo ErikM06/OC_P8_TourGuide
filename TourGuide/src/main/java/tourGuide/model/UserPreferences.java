@@ -4,6 +4,7 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 
 import org.javamoney.moneta.Money;
+import tourGuide.DTO.UserPreferencesDTO;
 
 
 public class UserPreferences {
@@ -18,6 +19,25 @@ public class UserPreferences {
 	private int numberOfChildren = 0;
 	
 	public UserPreferences() {
+	}
+
+	public UserPreferences(UserPreferencesDTO userPreferencesDTO) {
+		this.attractionProximity = userPreferencesDTO.getAttractionProximity();
+		this.currency = Monetary.getCurrency(userPreferencesDTO.getCurrency());
+		this.lowerPricePoint = Money.of(userPreferencesDTO.getLowerPricePoint(), currency);
+		this.highPricePoint = Money.of(userPreferencesDTO.getHighPricePoint(), currency);
+		this.tripDuration = userPreferencesDTO.getTripDuration();
+		this.ticketQuantity = userPreferencesDTO.getTicketQuantity();
+		this.numberOfAdults = userPreferencesDTO.getNumberOfAdults();
+		this.numberOfChildren = userPreferencesDTO.getNumberOfChildren();
+	}
+
+	public CurrencyUnit getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(CurrencyUnit currency) {
+		this.currency = currency;
 	}
 	
 	public void setAttractionProximity(int attractionProximity) {

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tourGuide.DTO.UserPreferencesDTO;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.ProviderModel;
@@ -23,6 +24,9 @@ import tourGuide.repository.InternalTestService;
 import tourGuide.service.*;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
+
+import javax.money.CurrencyUnit;
+import javax.money.Monetary;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -217,6 +221,31 @@ public class TestTourGuideService {
 
 		assertTrue(getAllLastLocation.get(0).containsValue(lastVisitedLocationModelUser.locationModel));
 		assertTrue(getAllLastLocation.get(1).containsValue(lastVisitedLocationModelUser2.locationModel));
+	}
+
+	@Test
+	public void updateUserPreferences () throws UserNotFoundException {
+
+		InternalTestService internalTestService = new InternalTestService();
+		InternalTestHelper.setInternalUserNumber(10);
+		GpsService gpsService = new GpsService();
+		UserService userService = new UserService(internalTestService);
+		RewardsService rewardsService = new RewardsService(gpsService);
+		TripDealsService tripDealsService = new TripDealsService();
+		TourGuideService tourGuideService = new TourGuideService(rewardsService, gpsService, internalTestService, tripDealsService, userService);
+
+		User user = new User(UUID.randomUUID(), "internalUser1", "000", "jon@tourGuide.com");
+		CurrencyUnit currency = Monetary.getCurrency("USD");
+		UserPreferencesDTO userPreferencesDTOTest = new UserPreferencesDTO("boby",50,currency.toString(), 100,500,1,1,2,2);
+		UserPreferences userPreferencesTest = new UserPreferences();
+		userPreferencesTest.setTripDuration(1);
+		userPreferencesTest.setNumberOfAdults(1);
+		userPreferencesTest.setNumberOfChildren(1);
+		user.setUserPreferences(userPreferencesTest);
+		UserPreferences oldPreferences = user.getUserPreferences();
+		UserPreferences newPreferences = tourGuideService.updateUserPreferences(user.getUserName(), userPreferencesDTOTest);
+		assertNotEquals(oldPreferences,newPreferences);
+
 	}
 
 

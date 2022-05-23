@@ -30,7 +30,7 @@ public class GpsService {
      */
     public List<AttractionModel> getAttractionsService() throws InvalidMediaTypeException {
         RestTemplate restTemplate = new RestTemplate();
-        String GPS_UTIL_SERVICE_API_ALL_ATTRACTION = "http://gpsUtil:8090/getAllAttraction";
+        String GPS_UTIL_SERVICE_API_ALL_ATTRACTION = "http://localhost:8090/getAllAttraction";
         ResponseEntity<List<AttractionModel>> result =
                 restTemplate.exchange(
                         GPS_UTIL_SERVICE_API_ALL_ATTRACTION,
@@ -56,7 +56,7 @@ public class GpsService {
         httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        String GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION = "http://gpsUtil:8090/getUserLastVisitedLocation";
+        String GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION = "http://localhost:8090/getUserLastVisitedLocation";
         String USER_ID = "?userId=";
         ResponseEntity<VisitedLocationModel> result = restTemplate.getForEntity( GPS_UTIL_SERVICE_API_LAST_VISITED_LOCATION
                         + USER_ID
