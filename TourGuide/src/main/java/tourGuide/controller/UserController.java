@@ -6,17 +6,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import tourGuide.DTO.UserPreferencesDTO;
 import tourGuide.customExceptions.UserNotFoundException;
 import tourGuide.repository.InternalTestService;
 import tourGuide.service.TourGuideService;
-import tourGuide.service.UserService;
 
-@Controller
+@RestController
 public class UserController {
-
-    @Autowired
-    UserService userService;
 
     @Autowired
     InternalTestService internalTestService;
@@ -29,7 +26,6 @@ public class UserController {
         if(internalTestService.getUser(userName) ==null) {
             throw new UserNotFoundException(userName);
         }
-
         return JsonStream.serialize(new UserPreferencesDTO(userName,
                 tourGuideService.updateUserPreferences(userName, userPreferencesDTO)));
     }

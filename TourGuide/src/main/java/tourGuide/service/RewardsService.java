@@ -102,7 +102,7 @@ public class RewardsService {
 	 * @throws InvalidMediaTypeException
 	 */
 	public Integer getRewardPoints(UUID attractionId, UUID userID) throws InvalidMediaTypeException {
-		String URL_TO_REWARD_POINT = "http://localhost:9000/getRewardPoint";
+		String URL_TO_REWARD_POINT = "http://rewardsCentral:9000/getRewardPoint";
 		String URI_ATTRACTION_UUID = "?attractionId=";
 		String AND = "&";
 		String URI_USER_UUID ="userId=";
